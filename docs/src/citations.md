@@ -15,7 +15,7 @@ If you are using `DataDrivenDiffEq.jl` for research, please cite
 }
 ```
 
-If you are using the [SymbolicRegression.jl](https://ai.damtp.cam.ac.uk/symbolicregression/dev/) API, please cite
+If you are using the [SymbolicRegression.jl](https://ai.damtp.cam.ac.uk/symbolicregression/stable/) API, please cite
 
 ```bibtex
 @misc{cranmerInterpretableMachineLearning2023,

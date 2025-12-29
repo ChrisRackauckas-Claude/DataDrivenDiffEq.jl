@@ -33,7 +33,7 @@ prob = ContinuousDataDrivenProblem(X, t, U = U)
 
 #md plot(prob)
 
-# To solve our problem, we will use [`EQSearch`](@ref), which provides a wrapper for the [symbolic regression interface](https://astroautomata.com/SymbolicRegression.jl/v0.6/api/#Options).
+# To solve our problem, we will use [`EQSearch`](@ref), which provides a wrapper for the [symbolic regression interface](https://ai.damtp.cam.ac.uk/symbolicregression/stable/api/#Options).
 # We will stick to simple operations, use a `L1DistLoss`, and limit the verbosity of the algorithm.
 
 eqsearch_options = SymbolicRegression.Options(binary_operators = [+, *],
@@ -44,7 +44,7 @@ eqsearch_options = SymbolicRegression.Options(binary_operators = [+, *],
 alg = EQSearch(eq_options = eqsearch_options)
 
 # Again, we `solve` the problem to obtain a [`DataDrivenSolution`](@ref). Note that any additional keyword arguments are passed onto
-# symbolic regressions [`EquationSearch`](https://astroautomata.com/SymbolicRegression.jl/v0.6/api/#EquationSearch) with the exception of `niterations` which
+# symbolic regressions [`EquationSearch`](https://ai.damtp.cam.ac.uk/symbolicregression/stable/api/#EquationSearch) with the exception of `niterations` which
 # is `maxiters`
 
 res = solve(prob, alg, options = DataDrivenCommonOptions(maxiters = 100))

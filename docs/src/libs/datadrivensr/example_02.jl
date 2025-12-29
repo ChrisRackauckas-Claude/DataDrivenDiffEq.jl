@@ -19,14 +19,14 @@ tspan = (0.0, 10.0)
 sys = ODEProblem{true, SciMLBase.NoSpecialize}(pendulum!, u0, tspan)
 sol = solve(sys, Tsit5());
 
-# We will use the data provided by our problem, but add the control signal `U = sin(0.5*t)` to it. Instead of using a function, like in [another example](@ref linear_continuous_controls)
+# We will use the data provided by our problem.
 prob = DataDrivenProblem(sol)
 
 # And plot the problems data.
 
 #md plot(prob)
 
-# To solve our problem, we will use [`EQSearch`](@ref), which provides a wrapper for the [symbolic regression interface](https://astroautomata.com/SymbolicRegression.jl/v0.6/api/#Options).
+# To solve our problem, we will use [`EQSearch`](@ref), which provides a wrapper for the [symbolic regression interface](https://ai.damtp.cam.ac.uk/symbolicregression/stable/api/#Options).
 # We will stick to simple operations, use a `L1DistLoss`, and limit the verbosity of the algorithm.
 # Note that we do not include `sin`, but rather lift the search space of variables.
 
@@ -56,7 +56,7 @@ res = solve(prob, basis, alg, options = DataDrivenCommonOptions(maxiters = 100))
 system = get_basis(res)
 #md println(system) # hide
 
-#md # ## [Copy-Pasteable Code](@id symbolic_regression_simple_copy_paste)
+#md # ## [Copy-Pasteable Code](@id symbolic_regression_lifted_copy_paste)
 #md #
 #md # ```julia
 #md # @__CODE__
