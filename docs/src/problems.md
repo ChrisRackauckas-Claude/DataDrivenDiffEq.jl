@@ -16,7 +16,7 @@ problem = DiscreteDataDrivenProblem(X, t, U, p = p)
 problem = DiscreteDataDrivenProblem(X, t, (x, p, t) -> u(x, p, t))
 ```
 
-Similarly, a [`ContinuousDataDrivenProblem`](@ref) would need at least measurements and time-derivatives (`X` and `DX`) or measurements, time information and a way to derive the time derivatives(`X`, `t` and a [Collocation](@ref collocation) method). Again, this can be extended by including a control input as measurements or a function and possible parameters:
+Similarly, a [`ContinuousDataDrivenProblem`](@ref) would need at least measurements and time-derivatives (`X` and `DX`) or measurements, time information, and a way to derive the time derivatives (`X`, `t`, and a [Collocation](@ref collocation) method). Again, this can be extended by including a control input as measurements or a function and possible parameters:
 
 ```julia
 # Using available data
@@ -65,7 +65,7 @@ DirectDataDrivenProblem
 DataDrivenDataset
 ```
 
-A `DataDrivenDataset` collects several [`DataDrivenProblem`s](@ref problem) of the same type but treats them as a union for system identification.
+A `DataDrivenDataset` collects several [`DataDrivenProblem`](@ref problem)s of the same type but treats them as a union for system identification.
 
 ## Concrete Types
 
