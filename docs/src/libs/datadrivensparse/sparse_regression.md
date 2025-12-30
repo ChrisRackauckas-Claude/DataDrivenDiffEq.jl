@@ -1,12 +1,12 @@
 # DataDrivenSparse
 
-DataDrivenSparse provides a universal framework to infer system of equations using sparse regression. Assume the system:
+DataDrivenSparse provides a universal framework to infer systems of equations using sparse regression. Assume the system:
 
 ```math
 y_{i} = f(x_{i}, p, t_i, u_{i})
 ```
 
-Then might be able to express the unknown function $f$ as a linear combination of basis elements $\varphi_i : \mathbb R^{n_x} \times \mathbb R^{n_p} \times \mathbb R \times \mathbb R^{n_u} \mapsto \mathbb R$ .
+We might then be able to express the unknown function $f$ as a linear combination of basis elements $\varphi_i : \mathbb R^{n_x} \times \mathbb R^{n_p} \times \mathbb R \times \mathbb R^{n_u} \mapsto \mathbb R$ .
 
 ```math
 y_i = \sum_{j=1}^k \xi_k ~ \varphi_k\left(x_i, p, t_i, u_i \right)
