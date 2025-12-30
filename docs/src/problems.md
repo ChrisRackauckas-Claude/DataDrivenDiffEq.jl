@@ -51,6 +51,57 @@ problem = DirectDataDrivenProblem(X, t, Y, p = p)
 problem = DirectDataDrivenProblem(X, t, Y, (x, p, t) -> u(x, p, t), p = p)
 ```
 
+## Working with Real Data
+
+When working with experimental data from files (e.g., CSV), the data must be formatted correctly before creating a problem. The key points are:
+
+- **States `X`**: A matrix of shape `(n_states, n_timepoints)` where each column is a measurement at a time point
+- **Times `t`**: A vector of length `n_timepoints`
+- **Controls `U`**: Either a matrix of shape `(n_controls, n_timepoints)` or a function `(x, p, t) -> u_vector`
+
+### Loading Data from CSV
+
+```julia
+using CSV, DataFrames
+
+# Load your experimental data
+df = CSV.read("experiment.csv", DataFrame)
+
+# Extract time points
+t = Vector(df.time)
+
+# Extract state measurements (transpose so columns are time points)
+X = permutedims(Matrix(df[:, [:x1, :x2]]))
+
+# Extract control measurements
+U = permutedims(Matrix(df[:, [:u1]]))
+
+# Create the problem
+prob = ContinuousDataDrivenProblem(X, t, U = U)
+```
+
+### Time-Varying Controls from Data
+
+Control inputs can be specified in two ways:
+
+1. **As measured data** (matrix): Use this when you have control values recorded at each time point
+   ```julia
+   U = [u1_at_t1 u1_at_t2 ... u1_at_tn;
+        u2_at_t1 u2_at_t2 ... u2_at_tn]  # Shape: (n_controls, n_timepoints)
+   prob = ContinuousDataDrivenProblem(X, t, U = U)
+   ```
+
+2. **As a function**: Use this when controls can be computed analytically or when you want to interpolate measured data
+   ```julia
+   # Using DataInterpolations.jl to create a continuous function from discrete data
+   using DataInterpolations
+   u_interp = LinearInterpolation(vec(U), t)
+   control_func(x, p, t) = [u_interp(t)]
+   prob = ContinuousDataDrivenProblem(X, t, U = control_func)
+   ```
+
+For a complete example, see [Using Real Data with Time-Varying Controls](@ref real_data_controls).
+
 ## Concrete Types
 
 ```@docs
