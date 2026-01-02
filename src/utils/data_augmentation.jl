@@ -38,13 +38,16 @@ H = [x₁    x₂    x₃   ... xₙ₋ₘ₊₁]
 where `m = num_rows`.
 
 # Arguments
-- `x`: Input vector (1D time series)
-- `num_rows`: Number of rows in the Hankel matrix (number of delays + 1)
+
+  - `x`: Input vector (1D time series)
+  - `num_rows`: Number of rows in the Hankel matrix (number of delays + 1)
 
 # Returns
-- Hankel matrix of size `(num_rows, length(x) - num_rows + 1)`
+
+  - Hankel matrix of size `(num_rows, length(x) - num_rows + 1)`
 
 # Example
+
 ```julia
 x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
 H = hankel_matrix(x, 4)
@@ -83,6 +86,7 @@ creates new coordinates by stacking time-delayed versions of each state.
 
 For a single state `x = [x(t₁), x(t₂), ...]` with `num_delays` delays and
 delay interval `τ`, the embedded coordinates are:
+
 ```
 [x(t),      x(t+τ),      ...]
 [x(t-τ),    x(t),        ...]
@@ -94,17 +98,21 @@ delay interval `τ`, the embedded coordinates are:
 where `m = num_delays`.
 
 # Arguments
-- `X`: Data matrix of size `(n_states, n_samples)`
-- `num_delays`: Number of time delays to add (resulting in `num_delays + 1`
-  copies of each state at different delays)
+
+  - `X`: Data matrix of size `(n_states, n_samples)`
+  - `num_delays`: Number of time delays to add (resulting in `num_delays + 1`
+    copies of each state at different delays)
 
 # Keyword Arguments
-- `τ::Integer = 1`: Delay interval in samples (default: 1 sample)
+
+  - `τ::Integer = 1`: Delay interval in samples (default: 1 sample)
 
 # Returns
-- Embedded data matrix of size `(n_states * (num_delays + 1), n_samples - num_delays * τ)`
+
+  - Embedded data matrix of size `(n_states * (num_delays + 1), n_samples - num_delays * τ)`
 
 # Example
+
 ```julia
 # Single state variable
 X = reshape(1.0:10.0, 1, 10)  # 1×10 matrix
@@ -113,7 +121,7 @@ X_embed = delay_embedding(X, 2)
 
 # Multiple state variables
 X = randn(3, 100)  # 3 states, 100 samples
-X_embed = delay_embedding(X, 3, τ=2)
+X_embed = delay_embedding(X, 3, τ = 2)
 # Creates 12×94 matrix (3 states × 4 time copies)
 ```
 
@@ -152,16 +160,20 @@ Convenience method that converts a vector to a 1-row matrix, applies
 delay embedding, and returns the result.
 
 # Arguments
-- `x`: Input vector (1D time series)
-- `num_delays`: Number of time delays to add
+
+  - `x`: Input vector (1D time series)
+  - `num_delays`: Number of time delays to add
 
 # Keyword Arguments
-- `τ::Integer = 1`: Delay interval in samples
+
+  - `τ::Integer = 1`: Delay interval in samples
 
 # Returns
-- Embedded data matrix of size `(num_delays + 1, length(x) - num_delays * τ)`
+
+  - Embedded data matrix of size `(num_delays + 1, length(x) - num_delays * τ)`
 
 # Example
+
 ```julia
 x = collect(1.0:10.0)
 X_embed = delay_embedding(x, 2)
@@ -179,16 +191,20 @@ end
 Compute a truncated singular value decomposition of data matrix `X`.
 
 # Arguments
-- `X`: Data matrix
-- `rank`: Number of singular values/vectors to retain
+
+  - `X`: Data matrix
+  - `rank`: Number of singular values/vectors to retain
 
 # Returns
-- Named tuple `(U = U_r, S = S_r, V = V_r)` where:
-  - `U_r` is the first `rank` columns of U
-  - `S_r` is a vector of the first `rank` singular values
-  - `V_r` is the first `rank` columns of V
+
+  - Named tuple `(U = U_r, S = S_r, V = V_r)` where:
+
+      + `U_r` is the first `rank` columns of U
+      + `S_r` is a vector of the first `rank` singular values
+      + `V_r` is the first `rank` columns of V
 
 # Example
+
 ```julia
 X = randn(100, 50)
 result = truncated_svd(X, 5)
@@ -216,14 +232,17 @@ reducing the number of effective dimensions while preserving the most
 important features.
 
 # Arguments
-- `X`: Data matrix of size `(n_features, n_samples)`
-- `rank`: Number of dimensions to retain
+
+  - `X`: Data matrix of size `(n_features, n_samples)`
+  - `rank`: Number of dimensions to retain
 
 # Returns
-- Reduced data matrix of size `(rank, n_samples)`
-- The reduced coordinates `Y = U_r' * X` where `U_r` contains the first `rank` left singular vectors
+
+  - Reduced data matrix of size `(rank, n_samples)`
+  - The reduced coordinates `Y = U_r' * X` where `U_r` contains the first `rank` left singular vectors
 
 # Example
+
 ```julia
 X = randn(100, 50)  # 100 features, 50 samples
 X_reduced = reduce_dimension(X, 5)  # Reduce to 5 dimensions
@@ -247,12 +266,15 @@ to automatically determine the number of significant singular values,
 then projects onto those dimensions.
 
 # Arguments
-- `X`: Data matrix of size `(n_features, n_samples)`
+
+  - `X`: Data matrix of size `(n_features, n_samples)`
 
 # Returns
-- Reduced data matrix with automatically selected dimensionality
+
+  - Reduced data matrix with automatically selected dimensionality
 
 # Example
+
 ```julia
 X = randn(100, 50) + 0.1 * randn(100, 50)  # Low-rank + noise
 X_reduced = reduce_dimension(X)  # Automatically selects rank
