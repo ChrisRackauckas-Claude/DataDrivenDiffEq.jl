@@ -119,6 +119,10 @@ export collocate_data
 include("./utils/utils.jl")
 export optimal_shrinkage, optimal_shrinkage!
 
+include("./utils/data_augmentation.jl")
+export hankel_matrix, delay_embedding
+export truncated_svd, reduce_dimension
+
 include("./problem/type.jl")
 
 export DataDrivenProblem
