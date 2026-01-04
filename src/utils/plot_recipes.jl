@@ -33,14 +33,18 @@ end
 
 function gather_plot_information(x::DataDrivenDataset{N, C, D}) where {N, C, D}
     data = map([:X, :Y, :DX, :U]) do s
-        reduce(hcat, map(x.probs) do prob
-            getproperty(prob, s)
-        end)
+        reduce(
+            hcat, map(x.probs) do prob
+                getproperty(prob, s)
+            end
+        )
     end
 
-    t = reduce(vcat, map(x.probs) do prob
-        getproperty(prob, :t)
-    end)
+    t = reduce(
+        vcat, map(x.probs) do prob
+            getproperty(prob, :t)
+        end
+    )
 
     ylab = is_direct(x) ? "Sample ID" : "t"
 
@@ -102,7 +106,7 @@ end
 # TODO Dispatch for SINDy to show a separate plot of the active
 # terms in the candidates -> Need LatexStrings for that (most likely)
 # Get the symbols of the states for plotting
-# Add extreme values for error ? 
+# Add extreme values for error ?
 
 @recipe function resplot(x::AbstractDataDrivenSolution)
     plotins, xlab = gather_plot_information(x)

@@ -17,7 +17,7 @@ function cart_pole(u, p, t)
     du[1] = u[3]
     du[2] = u[4]
     du[3] = -(19.62 * sin(u[1]) + sin(u[1]) * cos(u[1]) * u[3]^2 + F * cos(u[1])) /
-            (2 - cos(u[1])^2)
+        (2 - cos(u[1])^2)
     du[4] = -(sin(u[1]) * u[3]^2 + 9.81 * sin(u[1]) * cos(u[1]) + F) / (2 - cos(u[1])^2)
     return du
 end
@@ -35,15 +35,17 @@ for (i, xi) in enumerate(eachcol(X))
 end
 t = solution.t
 
-ddprob = ContinuousDataDrivenProblem(X, t, DX = DX[3:4, :],
-    U = (u, p, t) -> [-0.2 + 0.5 * sin(6 * t)])
+ddprob = ContinuousDataDrivenProblem(
+    X, t, DX = DX[3:4, :],
+    U = (u, p, t) -> [-0.2 + 0.5 * sin(6 * t)]
+)
 
 #md plot(ddprob)
 
-# Note that we just included the third and forth time derivative, assuming that we already know that the velocity `x[3:4]` is equal to the time 
+# Note that we just included the third and forth time derivative, assuming that we already know that the velocity `x[3:4]` is equal to the time
 # derivative of the position `x[1:2]`.
-# Next, we define a sufficient [`Basis`](@ref). Again, we need to include `implicits` in the definition of 
-# our candidate functions and inform the [`Basis`](@ref) of it.  
+# Next, we define a sufficient [`Basis`](@ref). Again, we need to include `implicits` in the definition of
+# our candidate functions and inform the [`Basis`](@ref) of it.
 
 @parameters t
 @variables u[1:4] du[1:2] x[1:1]
@@ -70,8 +72,10 @@ basis = Basis(implicits, u, implicits = du, controls = x, iv = t);
 
 # We solve the problem by varying over a sufficient set of thresholds for the associated optimizer.
 
-λ = [1e-4; 5e-4; 1e-3; 2e-3; 3e-3; 4e-3; 5e-3; 6e-3; 7e-3; 8e-3; 9e-3; 1e-2; 2e-2; 3e-2;
-     4e-2; 5e-2]
+λ = [
+    1.0e-4; 5.0e-4; 1.0e-3; 2.0e-3; 3.0e-3; 4.0e-3; 5.0e-3; 6.0e-3; 7.0e-3; 8.0e-3; 9.0e-3; 1.0e-2; 2.0e-2; 3.0e-2;
+    4.0e-2; 5.0e-2
+]
 
 opt = ImplicitOptimizer(λ)
 res = solve(ddprob, basis, opt)
@@ -81,8 +85,8 @@ res = solve(ddprob, basis, opt)
 system = get_basis(res)
 #md println(system) # hide
 
-# We have recovered the correct equations of motion! 
-# Another visual check using the problem and the result yields 
+# We have recovered the correct equations of motion!
+# Another visual check using the problem and the result yields
 
 #md plot(
 #md     plot(ddprob), plot(res), layout = (1,2)

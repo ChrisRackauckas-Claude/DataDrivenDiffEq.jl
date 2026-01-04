@@ -37,11 +37,11 @@ end
 SymbolicUtils.promote_symtype(::Difference, ::Type{T}) where {T} = T
 
 function Base.show(io::IO, D::Difference)
-    print(io, "Difference(", D.t, "; dt=", D.dt, ", update=", D.update, ")")
+    return print(io, "Difference(", D.t, "; dt=", D.dt, ", update=", D.update, ")")
 end
 Base.nameof(::Difference) = :Difference
 
 function Base.:(==)(D1::Difference, D2::Difference)
-    isequal(D1.t, D2.t) && isequal(D1.dt, D2.dt) && isequal(D1.update, D2.update)
+    return isequal(D1.t, D2.t) && isequal(D1.dt, D2.dt) && isequal(D1.update, D2.update)
 end
 Base.hash(D::Difference, u::UInt) = hash(D.dt, hash(D.t, xor(u, 0x055640d6d952f101)))

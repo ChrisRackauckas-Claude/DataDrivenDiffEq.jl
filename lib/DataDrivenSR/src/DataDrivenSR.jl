@@ -79,9 +79,11 @@ function SRResult(prob, hof, paretos)
     nobs = prod(size(y))
     ll = iszero(rss) ? convert(eltype(rss), Inf) : -nobs / 2 * log(rss / nobs)
     ll0 = -nobs / 2 * log.(sum(abs2, y .- mean(y, dims = 2)[:, 1]) / nobs)
-    return SRResult(bs, hof, paretos,
+    return SRResult(
+        bs, hof, paretos,
         rss, ll, ll0, dof, nobs,
-        DDReturnCode(1))
+        DDReturnCode(1)
+    )
 end
 
 is_success(k::SRResult) = getfield(k, :retcode) == DDReturnCode(1)
@@ -134,7 +136,7 @@ function convert_to_basis(paretofrontier, prob)
     @unpack alg, basis, problem, options = prob
     @unpack eq_options = alg
     @unpack maxiters, eval_expresssion, generate_symbolic_parameters, digits,
-    roundingmode = options
+        roundingmode = options
 
     eqs_ = map(paretofrontier) do dom
         node_to_symbolic(dom[end].tree, eq_options)
@@ -143,8 +145,12 @@ function convert_to_basis(paretofrontier, prob)
     # Substitute with the basis elements
     atoms = map(xi -> xi.rhs, equations(basis))
 
-    subs = Dict([SymbolicUtils.Sym{LiteralReal}(Symbol("x$(i)")) => x
-                 for (i, x) in enumerate(atoms)]...)
+    subs = Dict(
+        [
+            SymbolicUtils.Sym{LiteralReal}(Symbol("x$(i)")) => x
+                for (i, x) in enumerate(atoms)
+        ]...
+    )
 
     eqs, ps = collect_numerical_parameters(eqs_)
     eqs = map(Base.Fix2(substitute, subs), eqs)
@@ -173,12 +179,14 @@ function convert_to_basis(paretofrontier, prob)
         DataDrivenDiffEq._set_default_val(Num(ps_[i]), p[i])
     end
 
-    Basis(eqs, states(basis),
+    return Basis(
+        eqs, states(basis),
         parameters = [p_new; ps], iv = get_iv(basis),
         controls = controls(basis), observed = observed(basis),
         implicits = implicit_variables(basis),
         name = gensym(:Basis),
-        eval_expression = eval_expresssion)
+        eval_expression = eval_expresssion
+    )
 end
 
 # apply the algorithm on each dataset
@@ -187,13 +195,15 @@ function (x::EQSearch)(ps::InternalDataDrivenProblem{EQSearch}, X, Y)
     @unpack maxiters, abstol = options
     @unpack weights, eq_options, numprocs, procs, parallelism, runtests = x
 
-    hofs = SymbolicRegression.equation_search(X, Y;
+    hofs = SymbolicRegression.equation_search(
+        X, Y;
         niterations = maxiters,
         weights = weights,
         options = eq_options,
         numprocs = numprocs,
         procs = procs, parallelism = parallelism,
-        runtests = runtests)
+        runtests = runtests
+    )
 
     # We always want something which is a vector or tuple
     hofs = !isa(hofs, AbstractVector) ? [hofs] : hofs
@@ -209,10 +219,10 @@ end
 function CommonSolve.solve!(ps::InternalDataDrivenProblem{EQSearch})
     @unpack alg, basis, testdata, traindata, kwargs = ps
     @unpack weights, numprocs, procs, addprocs_function, parallelism, runtests,
-    eq_options = alg
+        eq_options = alg
     @unpack traindata, testdata, basis, options = ps
     @unpack maxiters, eval_expresssion, generate_symbolic_parameters,
-    digits, roundingmode, selector = options
+        digits, roundingmode, selector = options
     @unpack problem = ps
 
     results = map(traindata) do (X, Y)
@@ -222,7 +232,7 @@ function CommonSolve.solve!(ps::InternalDataDrivenProblem{EQSearch})
     idx = argmin(map(selector, results))
     best_res = results[idx]
 
-    DataDrivenSolution(best_res.basis, problem, alg, results, ps, best_res.retcode)
+    return DataDrivenSolution(best_res.basis, problem, alg, results, ps, best_res.retcode)
 end
 
 export EQSearch

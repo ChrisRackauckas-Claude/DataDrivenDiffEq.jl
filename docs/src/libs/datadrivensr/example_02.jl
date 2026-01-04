@@ -11,7 +11,7 @@ using DataDrivenSR
 
 function pendulum!(du, u, p, t)
     du[1] = u[2]
-    du[2] = -9.81 * sin(u[1])
+    return du[2] = -9.81 * sin(u[1])
 end
 
 u0 = [0.1, π / 2]
@@ -35,10 +35,12 @@ u = collect(u)
 
 basis = Basis([polynomial_basis(u, 2); sin.(u)], u)
 
-eqsearch_options = SymbolicRegression.Options(binary_operators = [+, *],
+eqsearch_options = SymbolicRegression.Options(
+    binary_operators = [+, *],
     loss = L1DistLoss(),
     verbosity = -1, progress = false, npop = 30,
-    timeout_in_seconds = 60.0)
+    timeout_in_seconds = 60.0
+)
 
 alg = EQSearch(eq_options = eqsearch_options)
 
@@ -63,5 +65,5 @@ system = get_basis(res)
 #md # ```
 
 ## Test #src
-@test rss(res) .<= 5e-2 #src
+@test rss(res) .<= 5.0e-2 #src
 @test r2(res) >= 0.95 #src

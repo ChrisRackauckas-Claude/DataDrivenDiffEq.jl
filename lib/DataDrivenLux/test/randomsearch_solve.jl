@@ -28,20 +28,26 @@ dummy_dataset = DataDrivenLux.Dataset(dummy_problem)
 
 @test isempty(dummy_dataset.u_intervals)
 
-for (data, _interval) in zip((X, Y, 1:size(X, 2)),
-    (dummy_dataset.x_intervals[1], dummy_dataset.y_intervals[1], dummy_dataset.t_interval))
+for (data, _interval) in zip(
+        (X, Y, 1:size(X, 2)),
+        (dummy_dataset.x_intervals[1], dummy_dataset.y_intervals[1], dummy_dataset.t_interval)
+    )
     @test isequal_interval(_interval, interval(extrema(data)))
 end
 
-# We have 1 Choices in the first layer, 2 in the last 
+# We have 1 Choices in the first layer, 2 in the last
 alg = RandomSearch(;
     populationsize = 10, functions = (sin, exp, *), arities = (1, 1, 2), rng,
-    n_layers = 2, loss = rss, keep = 2)
+    n_layers = 2, loss = rss, keep = 2
+)
 
-res = solve(dummy_problem, alg,
+res = solve(
+    dummy_problem, alg,
     options = DataDrivenCommonOptions(
-        maxiters = 50, progress = parse(Bool, get(ENV, "CI", "false")), abstol = 0.0))
-@test rss(res) <= 1e-2
+        maxiters = 50, progress = parse(Bool, get(ENV, "CI", "false")), abstol = 0.0
+    )
+)
+@test rss(res) <= 1.0e-2
 @test aicc(res) <= -100.0
 @test r2(res) >= 0.95
 results = get_results(res)

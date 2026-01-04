@@ -5,14 +5,17 @@ pages = [
     "Basis" => "basis.md",
     "Solutions" => "solutions.md",
     "Utilities" => "utils.md",
-    "DataDrivenDMD" => ["Background" => "libs/datadrivendmd/koopman.md",
-        "Examples" => koopman_tutorial
+    "DataDrivenDMD" => [
+        "Background" => "libs/datadrivendmd/koopman.md",
+        "Examples" => koopman_tutorial,
     ],
-    "DataDrivenSparse" => ["Background" => "libs/datadrivensparse/sparse_regression.md",
-        "Examples" => sparse_tutorial
+    "DataDrivenSparse" => [
+        "Background" => "libs/datadrivensparse/sparse_regression.md",
+        "Examples" => sparse_tutorial,
     ],
-    "DataDrivenSR" => ["Background" => "libs/datadrivensr/symbolic_regression.md",
-        "Examples" => sr_tutorial
+    "DataDrivenSR" => [
+        "Background" => "libs/datadrivensr/symbolic_regression.md",
+        "Examples" => sr_tutorial,
     ],
-    "Citing" => "citations.md"
+    "Citing" => "citations.md",
 ]

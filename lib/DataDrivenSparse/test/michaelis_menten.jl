@@ -6,7 +6,7 @@ using Test
 using StatsBase
 
 function michaelis_menten(u, p, t)
-    [0.6 - 1.5u[1] / (0.3 + u[1])] # Should be 0.6*0.3+0.6u[1] - 1.5u[1] = u[2]*u[1]-0.3*u[2] 
+    return [0.6 - 1.5u[1] / (0.3 + u[1])] # Should be 0.6*0.3+0.6u[1] - 1.5u[1] = u[2]*u[1]-0.3*u[2]
 end
 
 u0 = [0.5]
@@ -28,30 +28,34 @@ prob = DataDrivenDataset(DataDrivenProblem(solution_1), DataDrivenProblem(soluti
 @testset "Groundtruth" begin
     prob = DataDrivenDataset(DataDrivenProblem(solution_1), DataDrivenProblem(solution_2))
 
-    opts = [ImplicitOptimizer(STLSQ(5e-2, 1e-7));
-            ImplicitOptimizer(STLSQ(1e-2:1e-2:1e-1, 1e-7))]
+    opts = [
+        ImplicitOptimizer(STLSQ(5.0e-2, 1.0e-7));
+        ImplicitOptimizer(STLSQ(1.0e-2:1.0e-2:1.0e-1, 1.0e-7))
+    ]
     for opt in opts
         res = solve(prob, basis, opt)
         @test r2(res) >= 0.9
-        @test rss(res) < 1e-3
+        @test rss(res) < 1.0e-3
         @test dof(res) == 4
     end
 end
 
 @testset "Noise" begin
     rng = StableRNG(1111)
-    prob = DataDrivenDataset(map((solution_1, solution_2)) do sol
-        X = Array(sol)
-        X .+= 0.01 * randn(rng, size(X))
-        t = sol.t
-        ContinuousDataDrivenProblem(X, t, GaussianKernel())
-    end...)
+    prob = DataDrivenDataset(
+        map((solution_1, solution_2)) do sol
+            X = Array(sol)
+            X .+= 0.01 * randn(rng, size(X))
+            t = sol.t
+            ContinuousDataDrivenProblem(X, t, GaussianKernel())
+        end...
+    )
 
-    opts = [ImplicitOptimizer(ADMM(1e-2:1e-4:1e-1))]
+    opts = [ImplicitOptimizer(ADMM(1.0e-2:1.0e-4:1.0e-1))]
     for opt in opts
         res = solve(prob, basis, opt, options = DataDrivenCommonOptions())
         @test r2(res) >= 0.9
-        @test rss(res) <= 2e-1
+        @test rss(res) <= 2.0e-1
         @test dof(res) == 3
     end
 end

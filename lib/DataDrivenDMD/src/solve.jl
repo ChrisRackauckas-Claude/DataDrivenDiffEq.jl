@@ -1,13 +1,15 @@
 # This will get called within init in DataDrivenDiffEq
 
-function DataDrivenDiffEq.get_fit_targets(::A, prob::ABSTRACT_CONT_PROB,
-        basis::AbstractBasis) where {
+function DataDrivenDiffEq.get_fit_targets(
+        ::A, prob::ABSTRACT_CONT_PROB,
+        basis::AbstractBasis
+    ) where {
         A <:
-        AbstractKoopmanAlgorithm
-}
+        AbstractKoopmanAlgorithm,
+    }
     @unpack DX, X, p, t, U = prob
 
-    @assert size(DX, 1)==size(X, 1) "$(A) needs equal number of observed states and differentials for continuous problems!"
+    @assert size(DX, 1) == size(X, 1) "$(A) needs equal number of observed states and differentials for continuous problems!"
 
     Θ = basis(prob)
     n_x = size(X, 1)
@@ -31,24 +33,28 @@ function DataDrivenDiffEq.get_fit_targets(::A, prob::ABSTRACT_CONT_PROB,
     return Θ, Ỹ, DX
 end
 
-function DataDrivenDiffEq.get_fit_targets(::A, prob::ABSTRACT_DISCRETE_PROB,
-        basis::AbstractBasis) where {
+function DataDrivenDiffEq.get_fit_targets(
+        ::A, prob::ABSTRACT_DISCRETE_PROB,
+        basis::AbstractBasis
+    ) where {
         A <:
-        AbstractKoopmanAlgorithm
-}
+        AbstractKoopmanAlgorithm,
+    }
     # TODO Maybe we could, but this would require X[:, i+2] -> split in three here
     @assert !is_implicit(basis) "$(A) does not support implicit arguments in the basis for discrete problems!"
 
     @unpack X, p, t, U = prob
-    # Lift 
+    # Lift
     Θ = basis(prob)
     n_b, m = size(Θ)
     Ỹ = zeros(eltype(Θ), n_b, m)
 
     if is_controlled(basis)
         foreach(1:m) do i
-            Ỹ[:, i] .= basis(X[:, i + 1], p, t[i + 1],
-                U[:, i + 1])
+            Ỹ[:, i] .= basis(
+                X[:, i + 1], p, t[i + 1],
+                U[:, i + 1]
+            )
         end
     else
         foreach(1:m) do i
@@ -58,14 +64,14 @@ function DataDrivenDiffEq.get_fit_targets(::A, prob::ABSTRACT_DISCRETE_PROB,
     return Θ, Ỹ, X[:, 2:end]
 end
 
-## Solve the Koopman 
+## Solve the Koopman
 function CommonSolve.solve!(prob::InternalDataDrivenProblem{A}) where {
         A <:
-        AbstractKoopmanAlgorithm
-}
+        AbstractKoopmanAlgorithm,
+    }
     @unpack alg, basis, testdata, traindata, control_idx, options, problem, kwargs = prob
     @unpack selector = options
-    # Check for 
+    # Check for
     results = alg(prob; kwargs...)
 
     # Get the best result based on selector
@@ -74,7 +80,7 @@ function CommonSolve.solve!(prob::InternalDataDrivenProblem{A}) where {
     # Convert to basis
     new_basis = convert_to_basis(best_res, basis, problem, options, control_idx)
     # Build DataDrivenResult
-    DataDrivenSolution(new_basis, problem, alg, results, prob, best_res.retcode)
+    return DataDrivenSolution(new_basis, problem, alg, results, prob, best_res.retcode)
 end
 
 function convert_to_basis(res::KoopmanResult, basis::Basis, prob, options, control_idx)
@@ -90,11 +96,13 @@ function convert_to_basis(res::KoopmanResult, basis::Basis, prob, options, contr
         Θ .= c * Matrix(k)
     end
 
-    DataDrivenDiffEq.__construct_basis(Θ, basis, prob, options)
+    return DataDrivenDiffEq.__construct_basis(Θ, basis, prob, options)
 end
 
-function (algorithm::AbstractKoopmanAlgorithm)(prob::InternalDataDrivenProblem;
-        control_input = nothing, kwargs...)
+function (algorithm::AbstractKoopmanAlgorithm)(
+        prob::InternalDataDrivenProblem;
+        control_input = nothing, kwargs...
+    )
     (; traindata, testdata, control_idx, options) = prob
     (; abstol) = options
     # Preprocess control idx, indicates if any control is active in a single basis atom
@@ -109,7 +117,7 @@ function (algorithm::AbstractKoopmanAlgorithm)(prob::InternalDataDrivenProblem;
         X̃, Ũ = X̃, DataDrivenDiffEq.__EMPTY_MATRIX
     end
 
-    map(traindata) do (X, Y, Z)
+    return map(traindata) do (X, Y, Z)
         if any(control_idx)
             X_, Y_, U_ = X[no_controls, :], Y[no_controls, :], X[control_idx, :]
         else

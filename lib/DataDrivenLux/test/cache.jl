@@ -14,9 +14,11 @@ Y = sin.(X[1:1, :])
 dummy_basis = Basis(x, x)
 dummy_problem = DirectDataDrivenProblem(X, Y)
 
-# We have 1 Choices in the first layer, 2 in the last 
-alg = RandomSearch(populationsize = 10, functions = (sin,), arities = (1,),
-    rng = rng, loss = rss, keep = 1, distributed = false)
+# We have 1 Choices in the first layer, 2 in the last
+alg = RandomSearch(
+    populationsize = 10, functions = (sin,), arities = (1,),
+    rng = rng, loss = rss, keep = 1, distributed = false
+)
 
 cache = DataDrivenLux.init_cache(alg, dummy_basis, dummy_problem)
 rss_wrong = sum(abs2, Y .- X)

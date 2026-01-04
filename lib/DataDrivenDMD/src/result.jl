@@ -24,8 +24,10 @@ struct KoopmanResult{K, B, C, Q, P, T} <: AbstractDataDrivenResult
     """Returncode"""
     retcode::DDReturnCode
 
-    function KoopmanResult(k_::K, b::B, c::C, q::Q, p::P, X::AbstractMatrix{T},
-            Y::AbstractMatrix{T}, U::AbstractMatrix) where {K, B, C, Q, P, T}
+    function KoopmanResult(
+            k_::K, b::B, c::C, q::Q, p::P, X::AbstractMatrix{T},
+            Y::AbstractMatrix{T}, U::AbstractMatrix
+        ) where {K, B, C, Q, P, T}
         k = Matrix(k_)
         rss = isempty(b) ? sum(abs2, Y .- c * k * X) : sum(abs2, Y .- c * (k * X .+ b * U))
         dof = sum(!iszero, k)
@@ -34,7 +36,7 @@ struct KoopmanResult{K, B, C, Q, P, T} <: AbstractDataDrivenResult
         ll = -nobs / 2 * log(rss / nobs)
         nll = -nobs / 2 * log(mean(abs2, Y .- vec(mean(Y, dims = 2))))
 
-        new{K, B, C, Q, P, T}(k_, b, c, q, p, rss, ll, nll, dof, nobs, DDReturnCode(1))
+        return new{K, B, C, Q, P, T}(k_, b, c, q, p, rss, ll, nll, dof, nobs, DDReturnCode(1))
     end
 end
 

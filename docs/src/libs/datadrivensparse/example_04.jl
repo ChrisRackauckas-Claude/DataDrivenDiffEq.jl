@@ -49,8 +49,10 @@ basis = Basis(eqs, x, independent_variable = t, implicits = D.(x))
 # Next to varying over different sparsity penalties, we also want to batch our data using [`DataProcessing`](@ref).
 
 sampler = DataProcessing(split = 0.8, shuffle = true, batchsize = 30)
-res = solve(dd_prob, basis, ImplicitOptimizer(STLSQ(1e-2:1e-2:1.0)),
-    options = DataDrivenCommonOptions(data_processing = sampler, digits = 2))
+res = solve(
+    dd_prob, basis, ImplicitOptimizer(STLSQ(1.0e-2:1.0e-2:1.0)),
+    options = DataDrivenCommonOptions(data_processing = sampler, digits = 2)
+)
 #md println(res) #hide
 
 # And have a look at the resulting plot

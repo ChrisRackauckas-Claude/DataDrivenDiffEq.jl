@@ -36,15 +36,15 @@ opt = STLSQ(Float32[1e-2; 1e-1])
 This was formally `STRRidge` and has been renamed.
 """
 struct STLSQ{T <: Union{Number, AbstractVector}, R <: Number} <:
-       AbstractSparseRegressionAlgorithm
+    AbstractSparseRegressionAlgorithm
     """Sparsity threshold"""
     thresholds::T
     """Ridge regression parameter"""
     rho::R
 
-    function STLSQ(threshold::T = 1e-1, rho::R = zero(eltype(T))) where {T, R <: Number}
+    function STLSQ(threshold::T = 1.0e-1, rho::R = zero(eltype(T))) where {T, R <: Number}
         @assert all(threshold .> zero(eltype(threshold))) "Threshold must be positive definite"
-        @assert rho>=zero(R) "Ridge regression parameter must be positive definite!"
+        @assert rho >= zero(R) "Ridge regression parameter must be positive definite!"
         return new{T, R}(threshold, rho)
     end
 end
@@ -52,7 +52,7 @@ end
 Base.summary(::STLSQ) = "STLSQ"
 
 struct STLSQCache{usenormal, C <: AbstractArray, A <: BitArray, AT, BT, ATT, BTT} <:
-       AbstractSparseRegressionCache
+    AbstractSparseRegressionCache
     X::C
     X_prev::C
     active_set::A
@@ -65,12 +65,12 @@ struct STLSQCache{usenormal, C <: AbstractArray, A <: BitArray, AT, BT, ATT, BTT
 end
 
 function init_cache(alg::STLSQ, A::AbstractMatrix, b::AbstractVector)
-    init_cache(alg, A, permutedims(b))
+    return init_cache(alg, A, permutedims(b))
 end
 
 function init_cache(alg::STLSQ, A::AbstractMatrix, B::AbstractMatrix)
     n_x, m_x = size(A)
-    @assert size(B, 1)==1 "Caches only hold single targets!"
+    @assert size(B, 1) == 1 "Caches only hold single targets!"
     @unpack rho = alg
     λ = minimum(get_thresholds(alg))
 
@@ -94,10 +94,14 @@ function init_cache(alg::STLSQ, A::AbstractMatrix, B::AbstractMatrix)
 
     active_set!(active_set, proximal, coefficients, λ)
 
-    return STLSQCache{usenormal, typeof(coefficients), typeof(active_set), typeof(X),
-        typeof(Y), typeof(A), typeof(B)}(coefficients, prev_coefficients,
+    return STLSQCache{
+        usenormal, typeof(coefficients), typeof(active_set), typeof(X),
+        typeof(Y), typeof(A), typeof(B),
+    }(
+        coefficients, prev_coefficients,
         active_set, get_proximal(alg),
-        X, Y, A, B)
+        X, Y, A, B
+    )
 end
 
 function step!(cache::STLSQCache, λ::T) where {T}

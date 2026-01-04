@@ -31,9 +31,9 @@ rng = StableRNG(42)
     for alg in [DMDPINV(); DMDSVD(); TOTALDMD()]
         res = solve(prob, Ψ, alg, options = DataDrivenCommonOptions(digits = 1))
         koopman_res = first(get_results(res))
-        @test r2(res)≈0.95 atol=5e-2
+        @test r2(res) ≈ 0.95 atol = 5.0e-2
         @test dof(res) == 4
-        @test get_inputmap(koopman_res)≈[0; 1.0; 0.0;;] atol=1e-1
+        @test get_inputmap(koopman_res) ≈ [0; 1.0; 0.0;;] atol = 1.0e-1
         @test get_outputmap(koopman_res) ≈ [1.0 0 0; 0 1 0]
         @test get_parameter_values(res.basis) ≈ [-2.0; -0.4; 0.5; 0.9]
     end
@@ -63,9 +63,9 @@ end
     for alg in [DMDPINV(); DMDSVD(); TOTALDMD()]
         res = solve(prob, Ψ, alg, options = DataDrivenCommonOptions(digits = 1))
         koopman_res = first(get_results(res))
-        @test r2(res)≈0.95 atol=5e-2
+        @test r2(res) ≈ 0.95 atol = 5.0e-2
         @test dof(res) == 4
-        @test get_inputmap(koopman_res)≈[0; 0.0; 1.0;;] atol=1e-1
+        @test get_inputmap(koopman_res) ≈ [0; 0.0; 1.0;;] atol = 1.0e-1
         @test get_outputmap(koopman_res) ≈ [1.0 0 0; 0 1 1]
     end
 end

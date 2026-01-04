@@ -36,10 +36,12 @@ prob = ContinuousDataDrivenProblem(X, t, U = U)
 # To solve our problem, we will use [`EQSearch`](@ref), which provides a wrapper for the [symbolic regression interface](https://ai.damtp.cam.ac.uk/symbolicregression/stable/api/#Options).
 # We will stick to simple operations, use a `L1DistLoss`, and limit the verbosity of the algorithm.
 
-eqsearch_options = SymbolicRegression.Options(binary_operators = [+, *],
+eqsearch_options = SymbolicRegression.Options(
+    binary_operators = [+, *],
     loss = L1DistLoss(),
     verbosity = -1, progress = false, npop = 30,
-    timeout_in_seconds = 60.0)
+    timeout_in_seconds = 60.0
+)
 
 alg = EQSearch(eq_options = eqsearch_options)
 
@@ -68,5 +70,5 @@ system = get_basis(res)
 #md # ```
 
 ## Test #src
-@test rss(res) .<= 5e-1 #src
+@test rss(res) .<= 5.0e-1 #src
 @test r2(res) >= 0.95 #src

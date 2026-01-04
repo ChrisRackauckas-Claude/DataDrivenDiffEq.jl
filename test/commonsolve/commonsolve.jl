@@ -18,7 +18,7 @@ using StatsBase
         normalizer = DataNormalization(ZScoreTransform)
         transformation = StatsBase.fit(normalizer, xs)
         y = StatsBase.transform(transformation, xs)
-        @test var(y)≈one(eltype(y)) atol=1e-1
+        @test var(y) ≈ one(eltype(y)) atol = 1.0e-1
     end
 
     @testset "UnitRange" begin
@@ -104,9 +104,11 @@ end
         internal::IP
     end
 
-    function CommonSolve.solve!(p::DataDrivenDiffEq.InternalDataDrivenProblem{
-            DummyDataDrivenAlgorithm
-    })
+    function CommonSolve.solve!(
+            p::DataDrivenDiffEq.InternalDataDrivenProblem{
+                DummyDataDrivenAlgorithm,
+            }
+        )
         return DummyDataDrivenResult(p)
     end
 
@@ -161,9 +163,12 @@ end
         us = Symbolics.collect(us)
         ys = Symbolics.collect(ys)
         basis = Basis(
-            [xs .* us[3] .* exp(-ys[2]); xs[1] * sin(us[2]); xs[3] * us[1];
-             sum(ys)], xs,
-            controls = us, implicits = ys)
+            [
+                xs .* us[3] .* exp(-ys[2]); xs[1] * sin(us[2]); xs[3] * us[1];
+                sum(ys)
+            ], xs,
+            controls = us, implicits = ys
+        )
 
         prob = DirectDataDrivenProblem(x, y, U = u)
         alg = DummyDataDrivenAlgorithm()

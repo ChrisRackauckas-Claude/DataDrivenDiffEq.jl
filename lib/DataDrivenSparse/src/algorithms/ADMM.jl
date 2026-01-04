@@ -25,9 +25,9 @@ mutable struct ADMM{T, R <: Number} <: AbstractSparseRegressionAlgorithm
     """Augmented Lagrangian parameter"""
     rho::R
 
-    function ADMM(threshold::T = 1e-1, ρ::R = 1.0) where {T, R}
+    function ADMM(threshold::T = 1.0e-1, ρ::R = 1.0) where {T, R}
         @assert all(threshold .> zero(eltype(threshold))) "Threshold must be positive definite"
-        @assert zero(R)<ρ "Augmented Lagrangian parameter should be positive definite"
+        @assert zero(R) < ρ "Augmented Lagrangian parameter should be positive definite"
         return new{T, R}(threshold, ρ)
     end
 end
@@ -52,13 +52,13 @@ struct ADMMCache{fat, C, A, AT, BT, T, ATT, BTT} <: AbstractSparseRegressionCach
 end
 
 function init_cache(alg::ADMM, A::AbstractMatrix, b::AbstractVector)
-    init_cache(alg, A, permutedims(b))
+    return init_cache(alg, A, permutedims(b))
 end
 
 function init_cache(alg::ADMM, A::AbstractMatrix, B::AbstractMatrix)
     n_x, m_x = size(A)
 
-    @assert size(B, 1)==1 "Caches only hold single targets!"
+    @assert size(B, 1) == 1 "Caches only hold single targets!"
 
     λ = minimum(get_thresholds(alg))
 
@@ -81,12 +81,16 @@ function init_cache(alg::ADMM, A::AbstractMatrix, B::AbstractMatrix)
 
     active_set!(idx, proximal, coefficients, λ / rho)
 
-    return ADMMCache{fat, typeof(coefficients), typeof(idx), typeof(X), typeof(Y),
-        typeof(rho), typeof(A), typeof(B)}(coefficients, zero(coefficients),
+    return ADMMCache{
+        fat, typeof(coefficients), typeof(idx), typeof(X), typeof(Y),
+        typeof(rho), typeof(A), typeof(B),
+    }(
+        coefficients, zero(coefficients),
         idx, proximal,
         zero(coefficients),
         zero(coefficients),
-        X, Y, rho, A, B)
+        X, Y, rho, A, B
+    )
 end
 
 # Fat regression

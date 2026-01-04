@@ -8,21 +8,25 @@ struct SparseLinearSolver{A <: AbstractSparseRegressionAlgorithm, T <: Number}
     selector::Function
 end
 
-function SparseLinearSolver(x::A;
-        options = DataDrivenCommonOptions()) where {
+function SparseLinearSolver(
+        x::A;
+        options = DataDrivenCommonOptions()
+    ) where {
         A <:
-        AbstractSparseRegressionAlgorithm
-}
-    return SparseLinearSolver(x,
+        AbstractSparseRegressionAlgorithm,
+    }
+    return SparseLinearSolver(
+        x,
         options.abstol, options.reltol, options.maxiters,
-        options.verbose, options.progress, options.selector)
+        options.verbose, options.progress, options.selector
+    )
 end
 
 init_cache(alg::SparseLinearSolver, X, Y) = init_cache(alg.algorithm, X, Y)
 
 function (alg::SparseLinearSolver)(X::AbstractMatrix, Y::AbstractMatrix)
     @unpack verbose = alg
-    map(axes(Y, 1)) do i
+    return map(axes(Y, 1)) do i
         if verbose
             if i > 1
                 @printf "\n"

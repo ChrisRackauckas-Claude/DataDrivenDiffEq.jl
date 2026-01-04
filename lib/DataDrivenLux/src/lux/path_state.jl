@@ -9,11 +9,13 @@ struct PathState{T, PO <: Tuple, PI <: Tuple} <: AbstractPathState
     path_ids::PI
 
     function PathState{T}(
-            interval::Interval{T}, path_operators::PO, path_ids::PI) where {T, PO, PI}
+            interval::Interval{T}, path_operators::PO, path_ids::PI
+        ) where {T, PO, PI}
         return new{T, PO, PI}(interval, path_operators, path_ids)
     end
     function PathState{T}(
-            interval::Interval, path_operators::PO, path_ids::PI) where {T, PO, PI}
+            interval::Interval, path_operators::PO, path_ids::PI
+        ) where {T, PO, PI}
         return new{T, PO, PI}(Interval{T}(interval), path_operators, path_ids)
     end
 end
@@ -32,21 +34,26 @@ get_nodes(state::PathState) = state.path_ids
 @inline tuplejoin(x, y, z...) = tuplejoin(tuplejoin(x, y), z...)
 
 function update_path(
-        f::F where {F <: Function}, id::Tuple{Int, Int}, state::PathState{T}) where {T}
+        f::F where {F <: Function}, id::Tuple{Int, Int}, state::PathState{T}
+    ) where {T}
     return PathState{T}(
-        f(get_interval(state)), (f, get_operators(state)...), (id, get_nodes(state)...))
+        f(get_interval(state)), (f, get_operators(state)...), (id, get_nodes(state)...)
+    )
 end
 
 function update_path(::Nothing, id::Tuple{Int, Int}, state::PathState{T}) where {T}
     return PathState{T}(
-        get_interval(state), (identity, get_operators(state)...), (id, get_nodes(state)...))
+        get_interval(state), (identity, get_operators(state)...), (id, get_nodes(state)...)
+    )
 end
 
 function update_path(
-        f::F where {F <: Function}, id::Tuple{Int, Int}, states::PathState{T}...) where {T}
+        f::F where {F <: Function}, id::Tuple{Int, Int}, states::PathState{T}...
+    ) where {T}
     return PathState{T}(
         f(get_interval.(states)...), (f, tuplejoin(map(get_operators, states)...)...),
-        (id, tuplejoin(map(get_nodes, states)...)...))
+        (id, tuplejoin(map(get_nodes, states)...)...)
+    )
 end
 
 # Compute the degrees of freedom

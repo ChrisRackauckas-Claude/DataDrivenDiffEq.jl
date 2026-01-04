@@ -10,7 +10,7 @@ using DataDrivenDMD
 
 function slow_manifold(du, u, p, t)
     du[1] = p[1] * u[1]
-    du[2] = p[2] * (u[2] - u[1]^2)
+    return du[2] = p[2] * (u[2] - u[1]^2)
 end
 
 u0 = [3.0; -2.0]

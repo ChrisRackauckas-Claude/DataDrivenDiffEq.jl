@@ -22,8 +22,8 @@ rng = StableRNG(42)
 
         for alg in [DMDPINV(), DMDSVD(), TOTALDMD()]
             res = solve(prob, alg)
-            @test rss(res) <= 1e-2
-            @test r2(res)≈0.95 atol=5e-1
+            @test rss(res) <= 1.0e-2
+            @test r2(res) ≈ 0.95 atol = 5.0e-1
             @test dof(res) == 3
             @test loglikelihood(res) >= 400.0
 
@@ -31,7 +31,7 @@ rng = StableRNG(42)
                 @test Matrix(get_operator(operator_res)) ≈ A
                 @test isempty(get_inputmap(operator_res))
                 @test get_outputmap(operator_res) ≈ I(2)
-                @test rss(operator_res) <= 1e-10
+                @test rss(operator_res) <= 1.0e-10
             end
         end
     end
@@ -42,16 +42,16 @@ rng = StableRNG(42)
 
         for alg in [DMDPINV(), DMDSVD(), TOTALDMD()]
             res = solve(prob, alg)
-            @test rss(res) <= 1e-2
-            @test r2(res)≈1.0 atol=1e-1
+            @test rss(res) <= 1.0e-2
+            @test r2(res) ≈ 1.0 atol = 1.0e-1
             @test dof(res) == 4
             @test loglikelihood(res) >= 85.0
 
             foreach(get_results(res)) do operator_res
-                @test Matrix(get_operator(operator_res))≈A atol=1e-2
+                @test Matrix(get_operator(operator_res)) ≈ A atol = 1.0e-2
                 @test isempty(get_inputmap(operator_res))
                 @test get_outputmap(operator_res) ≈ I(2)
-                @test rss(operator_res) <= 1e-2
+                @test rss(operator_res) <= 1.0e-2
             end
         end
     end
@@ -69,16 +69,16 @@ end
 
         for alg in [DMDPINV(), DMDSVD(), TOTALDMD()]
             res = solve(prob, alg)
-            @test rss(res) <= 1e-2
-            @test r2(res)≈0.95 atol=5e-1
+            @test rss(res) <= 1.0e-2
+            @test r2(res) ≈ 0.95 atol = 5.0e-1
             @test dof(res) == 3
-            @test loglikelihood(res) >= 400e3
+            @test loglikelihood(res) >= 400.0e3
 
             foreach(get_results(res)) do operator_res
                 @test Matrix(get_operator(operator_res)) ≈ A
                 @test isempty(get_inputmap(operator_res))
                 @test get_outputmap(operator_res) ≈ I(2)
-                @test rss(operator_res) <= 1e-10
+                @test rss(operator_res) <= 1.0e-10
             end
         end
     end
@@ -92,9 +92,9 @@ end
         for alg in [DMDPINV(), DMDSVD(), TOTALDMD()]
             res = solve(prob, alg)
             @test rss(res) <= 2.0
-            @test r2(res)≈1.0 atol=1e-2
+            @test r2(res) ≈ 1.0 atol = 1.0e-2
             @test dof(res) == 4
-            @test loglikelihood(res) >= 85e3
+            @test loglikelihood(res) >= 85.0e3
         end
     end
 end
@@ -108,21 +108,21 @@ end
     sol_ = solve(prob, Tsit5(), saveat = 0.01)
 
     # True Rank is 3
-    X = Q * sol_[:, :] + 1e-3 * randn(rng, 20, 1001)
-    DX = Q * sol_(sol_.t, Val{1})[:, :] + 1e-3 * randn(rng, 20, 1001)
+    X = Q * sol_[:, :] + 1.0e-3 * randn(rng, 20, 1001)
+    DX = Q * sol_(sol_.t, Val{1})[:, :] + 1.0e-3 * randn(rng, 20, 1001)
     ddprob = ContinuousDataDrivenProblem(X, sol_.t, DX = DX)
 
     for alg in [TOTALDMD(3, DMDPINV()); TOTALDMD(0.01, DMDSVD(3))]
         res = solve(ddprob, alg, digits = 2)
-        @test rss(res) <= 1e-1
-        @test r2(res)≈1.0 atol=1e-2
+        @test rss(res) <= 1.0e-1
+        @test r2(res) ≈ 1.0 atol = 1.0e-2
         @test dof(res) == 400
-        @test loglikelihood(res) >= 99e3
+        @test loglikelihood(res) >= 99.0e3
 
         foreach(get_results(res)) do operator_res
             K = Matrix(get_operator(operator_res))
-            @test Q' * K * Q≈K̃ atol=1e-1
-            @test Q * K̃ * Q'≈K atol=1e-1
+            @test Q' * K * Q ≈ K̃ atol = 1.0e-1
+            @test Q * K̃ * Q' ≈ K atol = 1.0e-1
         end
     end
 end

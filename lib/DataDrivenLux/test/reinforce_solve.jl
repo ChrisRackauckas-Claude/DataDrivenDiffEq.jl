@@ -33,17 +33,21 @@ dummy_dataset = DataDrivenLux.Dataset(dummy_problem)
 @parameters p [bounds = (-3.0, -1.0), dist = truncated(Normal(-2.0, 1.0), -3.0, -1.0)]
 
 b = Basis([x; exp.(x)], x)
-# We have 1 Choices in the first layer, 2 in the last 
+# We have 1 Choices in the first layer, 2 in the last
 alg = Reinforce(;
     populationsize = 200, functions = (sin, exp, +), arities = (1, 1, 2), rng,
     n_layers = 3, use_protected = true, loss = bic, keep = 10, threaded = true,
-    optim_options = Optim.Options(time_limit = 0.2), optimiser = AdamW(1e-2))
+    optim_options = Optim.Options(time_limit = 0.2), optimiser = AdamW(1.0e-2)
+)
 
-res = solve(dummy_problem, b, alg,
+res = solve(
+    dummy_problem, b, alg,
     options = DataDrivenCommonOptions(
-        maxiters = 1000, progress = parse(Bool, get(ENV, "CI", "false")), abstol = 0.0))
+        maxiters = 1000, progress = parse(Bool, get(ENV, "CI", "false")), abstol = 0.0
+    )
+)
 
-@test rss(res) <= 1e-2
+@test rss(res) <= 1.0e-2
 @test aicc(res) <= -100.0
 @test r2(res) >= 0.95
 results = get_results(res)
