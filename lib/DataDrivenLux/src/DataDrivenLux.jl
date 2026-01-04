@@ -4,9 +4,9 @@ using DataDrivenDiffEq
 
 # Load specific (abstract) types
 using DataDrivenDiffEq: AbstractBasis, AbstractDataDrivenAlgorithm,
-                        AbstractDataDrivenResult, AbstractDataDrivenProblem, DDReturnCode,
-                        ABSTRACT_CONT_PROB, ABSTRACT_DISCRETE_PROB,
-                        InternalDataDrivenProblem, is_implicit, is_controlled
+    AbstractDataDrivenResult, AbstractDataDrivenProblem, DDReturnCode,
+    ABSTRACT_CONT_PROB, ABSTRACT_DISCRETE_PROB,
+    InternalDataDrivenProblem, is_implicit, is_controlled
 
 using DocStringExtensions: DocStringExtensions, FIELDS, TYPEDEF, SIGNATURES
 using CommonSolve: CommonSolve, solve!
@@ -23,7 +23,7 @@ using WeightInitializers: WeightInitializers, ones32, zeros32
 using InverseFunctions: InverseFunctions, NoInverse
 using TransformVariables: TransformVariables, as, transform_logdensity
 using Distributions: Distributions, Distribution, Normal, Uniform, Univariate, dof,
-                     loglikelihood, logpdf, mean, mode, quantile, scale, truncated
+    loglikelihood, logpdf, mean, mode, quantile, scale, truncated
 using DistributionsAD: DistributionsAD
 using StatsBase: StatsBase, aicc, nobs, nullloglikelihood, r2, rss, sum, weights
 
@@ -58,7 +58,7 @@ end
 ##
 include("utils.jl")
 
-## 
+##
 include("custom_priors.jl")
 export AdditiveError, MultiplicativeError
 export ObservedModel

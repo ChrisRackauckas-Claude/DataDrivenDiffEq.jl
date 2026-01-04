@@ -70,13 +70,13 @@ StatsBase.nobs(x::AbstractSparseRegressionCache) = begin
 end
 
 function StatsBase.loglikelihood(x::AbstractSparseRegressionCache)
-    begin
+    return begin
         -nobs(x) / 2 * log(rss(x) / nobs(x))
     end
 end
 
 function StatsBase.nullloglikelihood(x::AbstractSparseRegressionCache)
-    begin
+    return begin
         @unpack B̃ = x
         -nobs(x) / 2 * log(mean(abs2, B̃ .- mean(vec(B̃))))
     end
@@ -96,9 +96,11 @@ get_proximal(x::AbstractSparseRegressionAlgorithm) = SoftThreshold()
 include("solver.jl")
 export SparseLinearSolver
 
-function (x::X where {X <: AbstractSparseRegressionAlgorithm})(X, Y;
+function (x::X where {X <: AbstractSparseRegressionAlgorithm})(
+        X, Y;
         options::DataDrivenCommonOptions = DataDrivenCommonOptions(),
-        kwargs...)
+        kwargs...
+    )
     solver = SparseLinearSolver(x, options = options)
     results = solver(X, Y) # Keep this here for now
 

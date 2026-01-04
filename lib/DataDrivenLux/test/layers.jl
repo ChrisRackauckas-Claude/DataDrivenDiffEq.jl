@@ -18,8 +18,10 @@ using StableRNGs
     rng = StableRNG(43)
     ps, st = Lux.setup(rng, layer)
     layer_states, new_st = layer(states, ps, st)
-    @test all(exp.(values(DataDrivenLux.get_loglikelihood(layer, ps, new_st))) .≈
-              (1 / 3, 1 / 9, 1 / 27))
+    @test all(
+        exp.(values(DataDrivenLux.get_loglikelihood(layer, ps, new_st))) .≈
+            (1 / 3, 1 / 9, 1 / 27)
+    )
 
     intervals = map(DataDrivenLux.get_interval, layer_states)
     @test isequal_interval(intervals[1], interval(-1, 1))

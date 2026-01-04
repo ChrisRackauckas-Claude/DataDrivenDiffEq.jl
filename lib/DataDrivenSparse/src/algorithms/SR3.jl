@@ -39,11 +39,15 @@ mutable struct SR3{T, V, P <: AbstractProximalOperator} <: AbstractSparseRegress
     """Proximal operator"""
     proximal::P
 
-    function SR3(threshold::T = 1e-1, nu::V = 1.0,
-            R::P = HardThreshold()) where {T, V <: Number,
-            P <: AbstractProximalOperator}
+    function SR3(
+            threshold::T = 1.0e-1, nu::V = 1.0,
+            R::P = HardThreshold()
+        ) where {
+            T, V <: Number,
+            P <: AbstractProximalOperator,
+        }
         @assert all(threshold .> zero(eltype(threshold))) "Threshold must be positive definite"
-        @assert nu>zero(V) "Relaxation must be positive definite"
+        @assert nu > zero(V) "Relaxation must be positive definite"
 
         λ = isa(R, HardThreshold) ? threshold .^ 2 / 2 : threshold
         return new{typeof(λ), V, P}(λ, nu, R)
@@ -60,7 +64,7 @@ end
 Base.summary(::SR3) = "SR3"
 
 struct SR3Cache{C, A, P <: AbstractProximalOperator, AT, BT, T, ATT, BTT} <:
-       AbstractSparseRegressionCache
+    AbstractSparseRegressionCache
     X::C
     X_prev::C
     active_set::A
@@ -77,13 +81,13 @@ struct SR3Cache{C, A, P <: AbstractProximalOperator, AT, BT, T, ATT, BTT} <:
 end
 
 function init_cache(alg::SR3, A::AbstractMatrix, b::AbstractVector)
-    init_cache(alg, A, permutedims(b))
+    return init_cache(alg, A, permutedims(b))
 end
 
 function init_cache(alg::SR3, A::AbstractMatrix, B::AbstractMatrix)
     n_x, m_x = size(A)
 
-    @assert size(B, 1)==1 "Caches only hold single targets!"
+    @assert size(B, 1) == 1 "Caches only hold single targets!"
 
     λ = minimum(get_thresholds(alg))
 
@@ -99,12 +103,16 @@ function init_cache(alg::SR3, A::AbstractMatrix, B::AbstractMatrix)
 
     active_set!(idx, proximal, coefficients, λ)
 
-    return SR3Cache{typeof(coefficients), typeof(idx), typeof(proximal), typeof(X),
-        typeof(Y), typeof(nu), typeof(A), typeof(B)}(coefficients,
+    return SR3Cache{
+        typeof(coefficients), typeof(idx), typeof(proximal), typeof(X),
+        typeof(Y), typeof(nu), typeof(A), typeof(B),
+    }(
+        coefficients,
         copy(coefficients), idx,
         proximal,
         zero(coefficients),
-        X, Y, nu, A, B)
+        X, Y, nu, A, B
+    )
 end
 
 function step!(cache::SR3Cache, λ::T) where {T <: Number}

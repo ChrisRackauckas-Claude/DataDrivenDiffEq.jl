@@ -28,8 +28,10 @@ for (i, xi) in enumerate(eachcol(X))
 end
 t = solution.t
 
-ddprob = ContinuousDataDrivenProblem(X, t, DX = DX[3:4, :],
-    U = (u, p, t) -> [-0.2 + 0.5 * sin(6 * t)])
+ddprob = ContinuousDataDrivenProblem(
+    X, t, DX = DX[3:4, :],
+    U = (u, p, t) -> [-0.2 + 0.5 * sin(6 * t)]
+)
 
 @variables u[1:4] x[1:1] t
 du = [Symbolics.variable("du", i) for i in 3:4]
@@ -54,13 +56,17 @@ push!(implicits, x[1] * sin(u[1]))
 
 basis = Basis(implicits, u, controls = x, iv = t, implicits = du)
 
-λ = [1e-4; 5e-4; 1e-3; 2e-3; 3e-3; 4e-3; 5e-3; 6e-3; 7e-3; 8e-3; 9e-3; 1e-2; 2e-2; 3e-2;
-     4e-2; 5e-2]
+λ = [
+    1.0e-4; 5.0e-4; 1.0e-3; 2.0e-3; 3.0e-3; 4.0e-3; 5.0e-3; 6.0e-3; 7.0e-3; 8.0e-3; 9.0e-3; 1.0e-2; 2.0e-2; 3.0e-2;
+    4.0e-2; 5.0e-2
+]
 
-res = solve(ddprob, basis, ImplicitOptimizer(λ),
-    options = DataDrivenCommonOptions(verbose = false, digits = 3))
+res = solve(
+    ddprob, basis, ImplicitOptimizer(λ),
+    options = DataDrivenCommonOptions(verbose = false, digits = 3)
+)
 @test r2(res) >= 0.95
-@test rss(res) <= 1e-2
+@test rss(res) <= 1.0e-2
 @test dof(res) == 10
 @test get_parameter_values(res.basis) ≈
-      [-0.101, 0.05, -1.0, -0.05, -0.05, -0.203, 0.101, -0.101, -1.0, -0.101]
+    [-0.101, 0.05, -1.0, -0.05, -0.05, -0.203, 0.101, -0.101, -1.0, -0.101]

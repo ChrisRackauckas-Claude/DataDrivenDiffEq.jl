@@ -37,16 +37,16 @@ end
 
 function _generate_variables(sym::Symbol, n::Int, offset::Int = 0)
     xs = [Symbolics.variable(sym, i) for i in (offset + 1):(offset + n)]
-    Num.(map(ModelingToolkit.tovar, xs))
+    return Num.(map(ModelingToolkit.tovar, xs))
 end
 
 function _generate_parameters(sym::Symbol, n::Int, offset::Int = 0)
     xs = [Symbolics.variable(sym, i) for i in (offset + 1):(offset + n)]
-    Num.(map(ModelingToolkit.toparam, xs))
+    return Num.(map(ModelingToolkit.toparam, xs))
 end
 
 function _set_default_val(x::Num, val::T) where {T <: Number}
-    Num(Symbolics.setdefaultval(Symbolics.unwrap(x), val))
+    return Num(Symbolics.setdefaultval(Symbolics.unwrap(x), val))
 end
 
 function __build_eqs(coeff_mat, basis, prob)
@@ -77,7 +77,7 @@ function __build_eqs(coeff_mat, basis, prob)
     end
 
     return is_implicit(basis) ? _implicit_build_eqs(basis, eqs, p, prob) :
-           _explicit_build_eqs(basis, eqs, p, prob)
+        _explicit_build_eqs(basis, eqs, p, prob)
 end
 
 function _explicit_build_eqs(basis, eqs, p, prob)
@@ -154,20 +154,22 @@ function __construct_basis(X, b, prob, options)
 
         ps = parameters(b)
         eqs, ps,
-        implicits = is_implicit(b) ? _implicit_build_eqs(b, eqs, ps, prob) :
-                    _explicit_build_eqs(b, eqs, ps, prob)
+            implicits = is_implicit(b) ? _implicit_build_eqs(b, eqs, ps, prob) :
+            _explicit_build_eqs(b, eqs, ps, prob)
 
         p_new = map(eachindex(p)) do i
             _set_default_val(Num(ps[i]), p[i])
         end
     end
 
-    Basis(eqs, states(b),
+    return Basis(
+        eqs, states(b),
         parameters = p_new, iv = get_iv(b),
         controls = controls(b), observed = observed(b),
         implicits = implicits,
         name = gensym(:Basis),
-        eval_expression = eval_expresssion)
+        eval_expression = eval_expresssion
+    )
 end
 
 function unit_basis(prob::DataDrivenProblem)
@@ -181,5 +183,5 @@ function unit_basis(prob::DataDrivenProblem)
     p = _generate_parameters(:p, n_p)
     u = _generate_variables(:u, n_u)
 
-    Basis([x; u], x, controls = u, independent_variable = t, parameters = p)
+    return Basis([x; u], x, controls = u, independent_variable = t, parameters = p)
 end

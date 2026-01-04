@@ -34,8 +34,8 @@ function (d::DataProcessing)(data::Tuple)
     xtrain, xtest = splitobs(data, at = split, shuffle = false)
 
     batchsize = batchsize <= 0 ? size(first(xtrain), 2) : batchsize
-    xtest,
-    DataLoader(xtrain, batchsize = batchsize, partial = partial, shuffle = true, rng = rng)
+    return xtest,
+        DataLoader(xtrain, batchsize = batchsize, partial = partial, shuffle = true, rng = rng)
 end
 
 (d::DataProcessing)(X, Y) = d((X, Y))
@@ -62,19 +62,19 @@ DataNormalization() = DataNormalization{Nothing}()
 DataNormalization(method::Type{T}) where {T} = DataNormalization{T}()
 
 function StatsBase.fit(::DataNormalization{Nothing}, data)
-    StatsBase.fit(ZScoreTransform, data, dims = 2, scale = false, center = false)
+    return StatsBase.fit(ZScoreTransform, data, dims = 2, scale = false, center = false)
 end
 
 function StatsBase.fit(::DataNormalization{UnitRangeTransform}, data)
     tf = StatsBase.fit(UnitRangeTransform, data, dims = 2)
     # Adapt for constants here
     tf.scale .= [isinf(s) ? one(eltype(s)) : s for s in tf.scale]
-    tf
+    return tf
 end
 
 function StatsBase.fit(::DataNormalization{ZScoreTransform}, data)
     tf = StatsBase.fit(ZScoreTransform, data, dims = 2, center = false)
     # Adapt for constants here
     tf.scale .= [iszero(s) ? one(eltype(s)) : s for s in tf.scale]
-    tf
+    return tf
 end

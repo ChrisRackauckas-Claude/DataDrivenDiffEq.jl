@@ -101,7 +101,7 @@ function calckernel(::TricubeKernel, t)
 end
 
 function calckernel(::GaussianKernel, t)
-    exp(-0.5 * t^2) / (sqrt(2 * π))
+    return exp(-0.5 * t^2) / (sqrt(2 * π))
 end
 
 function calckernel(::CosineKernel, t)
@@ -113,28 +113,28 @@ function calckernel(::CosineKernel, t)
 end
 
 function calckernel(::LogisticKernel, t)
-    1 / (exp(t) + 2 + exp(-t))
+    return 1 / (exp(t) + 2 + exp(-t))
 end
 
 function calckernel(::SigmoidKernel, t)
-    2 / (π * (exp(t) + exp(-t)))
+    return 2 / (π * (exp(t) + exp(-t)))
 end
 
 function calckernel(::SilvermanKernel, t)
-    sin(abs(t) / 2 + π / 4) * 0.5 * exp(-abs(t) / sqrt(2))
+    return sin(abs(t) / 2 + π / 4) * 0.5 * exp(-abs(t) / sqrt(2))
 end
 
 function construct_t1(t, tpoints)
-    hcat(ones(eltype(tpoints), length(tpoints)), tpoints .- t)
+    return hcat(ones(eltype(tpoints), length(tpoints)), tpoints .- t)
 end
 
 function construct_t2(t, tpoints)
-    hcat(ones(eltype(tpoints), length(tpoints)), tpoints .- t, (tpoints .- t) .^ 2)
+    return hcat(ones(eltype(tpoints), length(tpoints)), tpoints .- t, (tpoints .- t) .^ 2)
 end
 
 function construct_w(t, tpoints, h, kernel)
     W = @. calckernel((kernel,), (tpoints - t) / h) / h
-    Diagonal(W)
+    return Diagonal(W)
 end
 
 """
@@ -211,27 +211,33 @@ function collocate_data(data, tpoints, kernel = TriangularKernel(); crop = false
     crop &&
         return estimated_derivative[:, 2:(end - 1)], estimated_derivative[:, 2:(end - 1)],
         tpoints[2:(end - 1)]
-    estimated_derivative, estimated_solution, tpoints
+    return estimated_derivative, estimated_solution, tpoints
 end
 
 # Adapted to dispatch on InterpolationMethod
 function collocate_data(data, tpoints, interp::InterpolationMethod; kwargs...)
-    collocate_data(data, tpoints, tpoints, interp; kwargs...)
+    return collocate_data(data, tpoints, tpoints, interp; kwargs...)
 end
 
-function collocate_data(data::AbstractVector, tpoints::AbstractVector,
+function collocate_data(
+        data::AbstractVector, tpoints::AbstractVector,
         tpoints_sample::AbstractVector,
-        interp::InterpolationMethod; kwargs...)
+        interp::InterpolationMethod; kwargs...
+    )
     u, du,
-    tpoints = collocate_data(reshape(data, 1, :), tpoints, tpoints_sample, interp;
-        kwargs...)
+        tpoints = collocate_data(
+        reshape(data, 1, :), tpoints, tpoints_sample, interp;
+        kwargs...
+    )
     return du[1, :], u[1, :], tpoints
 end
 
 # Adapted to dispatch on InterpolationMethod
-function collocate_data(data::AbstractMatrix{T}, tpoints::AbstractVector{T},
+function collocate_data(
+        data::AbstractMatrix{T}, tpoints::AbstractVector{T},
         tpoints_sample::AbstractVector{T}, interp::InterpolationMethod;
-        crop = false, kwargs...) where {T}
+        crop = false, kwargs...
+    ) where {T}
     u = zeros(T, size(data, 1), length(tpoints_sample))
     du = zeros(T, size(data, 1), length(tpoints_sample))
     for d1 in 1:size(data, 1)

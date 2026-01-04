@@ -20,7 +20,7 @@ function optimal_svht(m::Int64, n::Int64; known_noise::Bool = false)
 end
 
 function marcenko_pastur_density(t, lower, upper, beta)
-    sqrt((upper - t) .* (t - lower)) ./ (2π * beta * t)
+    return sqrt((upper - t) .* (t - lower)) ./ (2π * beta * t)
 end
 
 function incremental_marcenko_pastur(x, beta, gamma)
@@ -29,7 +29,7 @@ function incremental_marcenko_pastur(x, beta, gamma)
     lower = (1 - sqrt(beta))^2
 
     @inline function marcenko_pastur(x)
-        begin
+        return begin
             if (upper - x) * (x - lower) > 0
                 return marcenko_pastur_density(x, lower, upper, beta)
             else
@@ -54,7 +54,7 @@ function median_marcenko_pastur(beta)
     change = true
     x = ones(eltype(upper), 5)
     y = similar(x)
-    while change && (upper - lower > 1e-5)
+    while change && (upper - lower > 1.0e-5)
         x = range(lower, upper, length = 5)
         for (i, xi) in enumerate(x)
             y[i] = one(eltype(x)) - incremental_marcenko_pastur(xi, beta, 0)

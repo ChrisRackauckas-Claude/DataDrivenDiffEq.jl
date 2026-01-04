@@ -7,7 +7,8 @@ mutable struct PathStatistics{T} <: StatsBase.StatisticalModel
 end
 
 function update_stats!(
-        stats::PathStatistics{T}, rss::T, ll::T, nullll::T, dof::Int) where {T}
+        stats::PathStatistics{T}, rss::T, ll::T, nullll::T, dof::Int
+    ) where {T}
     stats.dof = dof
     stats.loglikelihood = ll
     stats.nullloglikelihood = nullll
@@ -27,8 +28,10 @@ StatsBase.r2(c::PathStatistics) = r2(c, :CoxSnell)
     model
 end
 
-function (c::ComponentModel)(dataset::Dataset{T}, ps, st::NamedTuple,
-        p::AbstractVector{T}) where {T}
+function (c::ComponentModel)(
+        dataset::Dataset{T}, ps, st::NamedTuple,
+        p::AbstractVector{T}
+    ) where {T}
     return first(c.model(c.basis(dataset, p), ps, st))
 end
 function (c::ComponentModel)(ps, st::NamedTuple, paths::Vector{<:AbstractPathState})
@@ -91,12 +94,15 @@ get_scales(c::Candidate) = transform_scales(c.observed, c.scales)
 
 function Candidate(
         rng, model, basis, dataset::Dataset{T}; observed = ObservedModel(dataset.y),
-        parameterdist = ParameterDistributions(basis), ptype = Float32) where {T}
+        parameterdist = ParameterDistributions(basis), ptype = Float32
+    ) where {T}
     # Create the initial state and path
     dataset_intervals = interval_eval(basis, dataset, get_interval(parameterdist))
 
-    incoming_path = [PathState{ptype}(dataset_intervals[i], (), ((0, i),))
-                     for i in 1:length(basis)]
+    incoming_path = [
+        PathState{ptype}(dataset_intervals[i], (), ((0, i),))
+            for i in 1:length(basis)
+    ]
 
     ps, st = Lux.setup(rng, model)
     outgoing_path, st = sample(model, incoming_path, ps, st)
@@ -119,9 +125,11 @@ function Candidate(
 
     stats = PathStatistics(rss, lls, null_ll, dof_, prod(size(dataset.y)))
 
-    return Candidate(Lux.replicate(rng), st, ComponentVector(ps), incoming_path,
+    return Candidate(
+        Lux.replicate(rng), st, ComponentVector(ps), incoming_path,
         outgoing_path, stats, observed, parameterdist, scales, parameters,
-        ComponentModel(basis, model))
+        ComponentModel(basis, model)
+    )
 end
 
 function update_values!(c::Candidate, ps, dataset)
@@ -140,13 +148,16 @@ function update_values!(c::Candidate, ps, dataset)
 end
 
 @views function Distributions.logpdf(
-        c::Candidate, p::ComponentVector, dataset::Dataset{T}, ps = c.ps) where {T}
+        c::Candidate, p::ComponentVector, dataset::Dataset{T}, ps = c.ps
+    ) where {T}
     ŷ = c(dataset, ps, p.parameters)
     return logpdf(c, p, dataset.y, ŷ)
 end
 
-function Distributions.logpdf(c::Candidate, p::AbstractVector, y::AbstractMatrix{T},
-        ŷ::AbstractMatrix{T}) where {T}
+function Distributions.logpdf(
+        c::Candidate, p::AbstractVector, y::AbstractMatrix{T},
+        ŷ::AbstractMatrix{T}
+    ) where {T}
     return logpdf(c.observed, y, ŷ, p.scales) + logpdf(c.parameterdist, p.parameters)
 end
 
@@ -154,7 +165,8 @@ initial_values(c::Candidate) = ComponentVector(; c.scales, c.parameters)
 
 function optimize_candidate!(
         c::Candidate, dataset::Dataset{T}, ps = c.ps; optimizer = Optim.LBFGS(),
-        options::Optim.Options = Optim.Options()) where {T}
+        options::Optim.Options = Optim.Options()
+    ) where {T}
     path, st = sample(c, ps)
     p_init = initial_values(c)
 
@@ -199,7 +211,8 @@ end
 get_nodes(c::Candidate) = @ignore_derivatives get_nodes(c.outgoing_path)
 
 function convert_to_basis(
-        candidate::Candidate, ps = candidate.ps, options = DataDrivenCommonOptions())
+        candidate::Candidate, ps = candidate.ps, options = DataDrivenCommonOptions()
+    )
     (; basis, model) = candidate.model
     (; eval_expresssion) = options
     p_best = get_parameters(candidate)
@@ -215,8 +228,10 @@ function convert_to_basis(
 
     eqs = collect(map(eq -> ModelingToolkit.substitute(eq, subs), eqs))
 
-    return Basis(eqs, states(basis), parameters = p_new, iv = get_iv(basis),
+    return Basis(
+        eqs, states(basis), parameters = p_new, iv = get_iv(basis),
         controls = controls(basis), observed = observed(basis),
         implicits = implicit_variables(basis),
-        name = gensym(:Basis), eval_expression = eval_expresssion)
+        name = gensym(:Basis), eval_expression = eval_expresssion
+    )
 end

@@ -5,7 +5,7 @@ _is_constant(x::Number) = true
 function _is_constant(x)
     # In SymbolicUtils v4+, constants are wrapped in Const type
     # Check using isconst if available
-    SymbolicUtils.isconst(x)
+    return SymbolicUtils.isconst(x)
 end
 
 count_operation(x::Number, op::Function, nested::Bool = true) = 0
@@ -29,7 +29,7 @@ function count_operation(x::SymbolicUtils.BasicSymbolic, op::Function, nested::B
 end
 
 function count_operation(x::Num, op::Function, nested::Bool = true)
-    count_operation(value(x), op, nested)
+    return count_operation(value(x), op, nested)
 end
 
 function count_operation(x, ops::AbstractArray, nested::Bool = true)
@@ -37,7 +37,7 @@ function count_operation(x, ops::AbstractArray, nested::Bool = true)
 end
 
 function count_operation(x::AbstractArray, op::Function, nested::Bool = true)
-    sum([count_operation(xi, op, nested) for xi in x])
+    return sum([count_operation(xi, op, nested) for xi in x])
 end
 
 function count_operation(x::AbstractArray, ops::AbstractArray, nested::Bool = true)
@@ -46,7 +46,7 @@ function count_operation(x::AbstractArray, ops::AbstractArray, nested::Bool = tr
 
         counter += count_operation(xi, op, nested)
     end
-    counter
+    return counter
 end
 
 function split_term!(x::AbstractArray, o, ops::AbstractArray = [+])
@@ -72,7 +72,7 @@ function split_term!(x::AbstractArray, o, ops::AbstractArray = [+])
 end
 
 function split_term!(x::AbstractArray, o::Num, ops::AbstractArray = [+])
-    split_term!(x, value(o), ops)
+    return split_term!(x, value(o), ops)
 end
 
 remove_constant_factor(x::Num) = remove_constant_factor(value(x))
@@ -121,28 +121,28 @@ function is_dependent(x::SymbolicUtils.BasicSymbolic, y::SymbolicUtils.BasicSymb
     # In SymbolicUtils v4, occursin was removed. Use get_variables instead.
     # Check if y appears in the variables of x
     vars = Symbolics.get_variables(x)
-    y in vars
+    return y in vars
 end
 
 function is_dependent(x::Any, y::SymbolicUtils.BasicSymbolic)
-    false
+    return false
 end
 
 function is_dependent(x::SymbolicUtils.BasicSymbolic, y::Any)
-    false
+    return false
 end
 
 function is_dependent(x::Num, y::Num)
-    is_dependent(y.val, x.val)
+    return is_dependent(y.val, x.val)
 end
 
 function is_dependent(x::Num, y::AbstractVector{Num})
-    map(yi -> is_dependent(x, yi), y)
+    return map(yi -> is_dependent(x, yi), y)
 end
 
 function is_dependent(x::AbstractVector{Num}, y::AbstractVector{Num})
     inds = reduce(hcat, map(xi -> is_dependent(xi, y), x))
-    inds = reshape(inds, length(y), length(x))
+    return inds = reshape(inds, length(y), length(x))
 end
 
 is_not_dependent(x, y) = .!is_dependent(x, y)
@@ -157,7 +157,7 @@ end
 
 function is_binary(f::Function, t::Type = Number)
     f ∈ [+, -, *, /, ^] && return true
-    !is_unary(f, t)
+    return !is_unary(f, t)
 end
 
 function ariety(f::Function, t::Type = Number)

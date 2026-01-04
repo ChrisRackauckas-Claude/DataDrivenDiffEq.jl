@@ -47,6 +47,6 @@ get_basis(res)
 #md # ```
 
 ## Test the result #src
-@test rss(res) <= 1e-3 #src
+@test rss(res) <= 1.0e-3 #src
 @test r2(res) >= 0.99 #src
 @test dof(res) == 3 #src

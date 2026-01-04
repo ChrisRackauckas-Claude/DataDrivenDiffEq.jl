@@ -5,7 +5,7 @@ using Pkg
 
 function dev_subpkg(subpkg)
     subpkg_path = abspath(joinpath(dirname(@__FILE__), "..", "lib", subpkg))
-    Pkg.develop(PackageSpec(path = subpkg_path))
+    return Pkg.develop(PackageSpec(path = subpkg_path))
 end
 
 dev_subpkg("DataDrivenDMD")
@@ -50,25 +50,34 @@ function create_tutorials(dirname, targetdir, excludes = [])
             mdpost(str) = replace(str, "@__CODE__" => code)
             Literate.markdown(ipath, targetdir)
             Literate.markdown(ipath, targetdir, execute = false, postprocess = mdpost)
-            push!(tutorials,
-                relpath(joinpath(targetdir, fname * ".md"), joinpath(@__DIR__, "src")))
+            push!(
+                tutorials,
+                relpath(joinpath(targetdir, fname * ".md"), joinpath(@__DIR__, "src"))
+            )
         end
     end
     return tutorials
 end
 
-koopman_tutorial = create_tutorials(joinpath(@__DIR__, "src/libs/datadrivendmd/"),
-    joinpath(@__DIR__, "src/libs/datadrivendmd/examples"))
-sparse_tutorial = create_tutorials(joinpath(@__DIR__, "src/libs/datadrivensparse/"),
-    joinpath(@__DIR__, "src/libs/datadrivensparse/examples"))
-sr_tutorial = create_tutorials(joinpath(@__DIR__, "src/libs/datadrivensr/"),
-    joinpath(@__DIR__, "src/libs/datadrivensr/examples"))
+koopman_tutorial = create_tutorials(
+    joinpath(@__DIR__, "src/libs/datadrivendmd/"),
+    joinpath(@__DIR__, "src/libs/datadrivendmd/examples")
+)
+sparse_tutorial = create_tutorials(
+    joinpath(@__DIR__, "src/libs/datadrivensparse/"),
+    joinpath(@__DIR__, "src/libs/datadrivensparse/examples")
+)
+sr_tutorial = create_tutorials(
+    joinpath(@__DIR__, "src/libs/datadrivensr/"),
+    joinpath(@__DIR__, "src/libs/datadrivensr/examples")
+)
 
 # Must be after tutorials is created
 include("pages.jl")
 
 # Create the docs
-makedocs(sitename = "DataDrivenDiffEq.jl",
+makedocs(
+    sitename = "DataDrivenDiffEq.jl",
     authors = "Julius Martensen, Christopher Rackauckas, et al.",
     modules = [DataDrivenDiffEq, DataDrivenDMD, DataDrivenSparse, DataDrivenSR],
     clean = true, doctest = false, linkcheck = true,
@@ -77,11 +86,16 @@ makedocs(sitename = "DataDrivenDiffEq.jl",
         "http://cwrowley.princeton.edu/papers/Hemati-2017a.pdf",
         "https://royalsocietypublishing.org/doi/10.1098/rspa.2020.0279",
         "https://www.pnas.org/doi/10.1073/pnas.1517384113",
-        "https://link.springer.com/article/10.1007/s00332-015-9258-5"
+        "https://link.springer.com/article/10.1007/s00332-015-9258-5",
     ],
-    format = Documenter.HTML(assets = ["assets/favicon.ico"],
-        canonical = "https://docs.sciml.ai/DataDrivenDiffEq/stable/"),
-    pages = pages)
+    format = Documenter.HTML(
+        assets = ["assets/favicon.ico"],
+        canonical = "https://docs.sciml.ai/DataDrivenDiffEq/stable/"
+    ),
+    pages = pages
+)
 
-deploydocs(repo = "github.com/SciML/DataDrivenDiffEq.jl.git";
-    push_preview = true)
+deploydocs(
+    repo = "github.com/SciML/DataDrivenDiffEq.jl.git";
+    push_preview = true
+)

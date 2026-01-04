@@ -21,35 +21,37 @@ end
     x = 0:0.1:10.0
     y = permutedims(x)
     z = ones(1, length(x))
-    # This list does not cover all kernels since some 
+    # This list does not cover all kernels since some
     # are singular
     for m in [
-        EpanechnikovKernel(),
-        UniformKernel(),
-        TriangularKernel(),
-        GaussianKernel(),
-        LogisticKernel(),
-        SigmoidKernel(),
-        SilvermanKernel()
-    ]
+            EpanechnikovKernel(),
+            UniformKernel(),
+            TriangularKernel(),
+            GaussianKernel(),
+            LogisticKernel(),
+            SigmoidKernel(),
+            SilvermanKernel(),
+        ]
         ẑ, ŷ, x̂ = collocate_data(y, x, m)
-        @test ẑ≈z atol=1e-1 rtol=1e-1
-        @test ŷ≈y atol=1e-1 rtol=1e-1
-        @test x̂≈x atol=1e-1 rtol=1e-1
+        @test ẑ ≈ z atol = 1.0e-1 rtol = 1.0e-1
+        @test ŷ ≈ y atol = 1.0e-1 rtol = 1.0e-1
+        @test x̂ ≈ x atol = 1.0e-1 rtol = 1.0e-1
     end
 
     x = 0:0.1:10.0
     y = permutedims(sin.(x))
     z = permutedims(cos.(x))
 
-    for m in InterpolationMethod.([
-        LinearInterpolation,
-        QuadraticInterpolation,
-        CubicSpline
-    ])
+    for m in InterpolationMethod.(
+            [
+                LinearInterpolation,
+                QuadraticInterpolation,
+                CubicSpline,
+            ]
+        )
         ẑ, ŷ, x̂ = collocate_data(y, x, m)
-        @test ẑ≈z atol=1e-1 rtol=1e-1
-        @test ŷ≈y atol=1e-1 rtol=1e-1
-        @test x̂≈x atol=1e-1 rtol=1e-1
+        @test ẑ ≈ z atol = 1.0e-1 rtol = 1.0e-1
+        @test ŷ ≈ y atol = 1.0e-1 rtol = 1.0e-1
+        @test x̂ ≈ x atol = 1.0e-1 rtol = 1.0e-1
     end
 end

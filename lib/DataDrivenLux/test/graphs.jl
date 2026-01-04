@@ -23,8 +23,11 @@ X = randn(1, 10)
     Y, _ = dag(X, ps, new_st)
     @test y == [sin.(x[1]); sin.(x[1])]
     @test Y == [sin.(X[1:1, :]); sin.(X[1:1, :])]
-    @test exp(sum(
-        sum ∘ values, values(DataDrivenLux.get_loglikelihood(dag, ps, new_st)))) == 1.0f0
+    @test exp(
+        sum(
+            sum ∘ values, values(DataDrivenLux.get_loglikelihood(dag, ps, new_st))
+        )
+    ) == 1.0f0
 end
 
 @testset "Two Layer Skip" begin
@@ -38,5 +41,5 @@ end
     @test y == [sin.(x[1]) .+ x[1]; x[1]]
     @test Y == [sin.(X[1:1, :]) .+ X[1:1, :]; X[1:1, :]]
     @test DataDrivenLux.get_loglikelihood(dag, ps, new_st, out_state) ==
-          sum(Float32[-2.7725887, -1.3862944])
+        sum(Float32[-2.7725887, -1.3862944])
 end

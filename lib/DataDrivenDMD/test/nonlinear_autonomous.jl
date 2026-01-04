@@ -57,9 +57,9 @@ end
 
     for alg in [DMDPINV(); DMDSVD(); TOTALDMD()]
         res = solve(prob, Ψ, alg, options = DataDrivenCommonOptions(digits = 2))
-        @test get_parameter_values(res.basis)≈[-0.8, 0.63, -0.7] atol=5e-2
+        @test get_parameter_values(res.basis) ≈ [-0.8, 0.63, -0.7] atol = 5.0e-2
         @test loglikelihood(res) >= 50.0
         @test r2(res) >= 0.95
-        @test rss(res) <= 1e-1
+        @test rss(res) <= 1.0e-1
     end
 end

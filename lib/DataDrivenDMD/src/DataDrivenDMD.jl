@@ -20,7 +20,7 @@ using LinearAlgebra
 
 abstract type AbstractKoopmanAlgorithm <: AbstractDataDrivenAlgorithm end
 
-# Results 
+# Results
 include("./result.jl")
 export KoopmanResult
 export get_operator, get_inputmap, get_outputmap, get_trainerror, get_testerror

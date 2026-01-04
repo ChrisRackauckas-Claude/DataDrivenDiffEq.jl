@@ -22,14 +22,16 @@ end
 # General method with inputs
 function (x::AbstractKoopmanAlgorithm)(
         X::AbstractArray, Y::AbstractArray, U::AbstractArray,
-        B::AbstractArray)
+        B::AbstractArray
+    )
     K, _ = x(X, Y - B * U)
     return (K, B)
 end
 
 function (x::AbstractKoopmanAlgorithm)(
         X::AbstractArray, Y::AbstractArray, U::AbstractArray,
-        ::Nothing)
+        ::Nothing
+    )
     return x(X, Y, U)
 end
 
@@ -117,8 +119,10 @@ function (x::DMDSVD{T})(X::AbstractArray, Y::AbstractArray) where {T <: Real}
 end
 
 # DMDc
-function (x::DMDSVD{T})(X::AbstractArray, Y::AbstractArray,
-        U::AbstractArray) where {T <: Real}
+function (x::DMDSVD{T})(
+        X::AbstractArray, Y::AbstractArray,
+        U::AbstractArray
+    ) where {T <: Real}
     isempty(U) && return x(X, Y)
     nx, m = size(X)
     nu, m = size(U)
@@ -164,7 +168,7 @@ $(FIELDS)
 $(SIGNATURES)
 """
 mutable struct TOTALDMD{R, A} <:
-               AbstractKoopmanAlgorithm where {R <: Number, A <: AbstractKoopmanAlgorithm}
+    AbstractKoopmanAlgorithm where {R <: Number, A <: AbstractKoopmanAlgorithm}
     truncation::R
     alg::A
 end
@@ -182,8 +186,10 @@ function (x::TOTALDMD)(X::AbstractArray, Y::AbstractArray, U::AbstractArray)
     return x.alg(X * Q, Y * Q, U * Q)
 end
 
-function (x::TOTALDMD)(X::AbstractArray, Y::AbstractArray, U::AbstractArray,
-        B::AbstractArray)
+function (x::TOTALDMD)(
+        X::AbstractArray, Y::AbstractArray, U::AbstractArray,
+        B::AbstractArray
+    )
     _, _, Q = truncated_svd([X; Y], x.truncation)
     K, _ = x.alg(X * Q, (Y - B * U) * Q)
     return (K, B)

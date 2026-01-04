@@ -41,7 +41,7 @@ end
 # System dynamics
 function controlled_system!(du, u, p, t)
     ctrl = control_signal(t)
-    du .= A_true * u .+ B_true .* ctrl
+    return du .= A_true * u .+ B_true .* ctrl
 end
 
 # Generate "experimental" data

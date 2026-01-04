@@ -3,31 +3,38 @@ struct DataDrivenFunction{IMPL, CTRLS, F1, F2} <: AbstractDataDrivenFunction{IMP
     f_iip::F2
 end
 
-function DataDrivenFunction(rhs, implicits, states, parameters, iv, controls,
-        eval_expression = false)
+function DataDrivenFunction(
+        rhs, implicits, states, parameters, iv, controls,
+        eval_expression = false
+    )
     _is_implicit = !isempty(implicits)
     _is_controlled = !isempty(controls)
 
     if !eval_expression
         f_oop,
-        f_iip = build_function(rhs,
+            f_iip = build_function(
+            rhs,
             value.(implicits), value.(states), value.(parameters),
             [value(iv)], value.(controls),
-            expression = Val{false})
+            expression = Val{false}
+        )
     else
         ex_oop,
-        ex_iip = build_function(rhs,
+            ex_iip = build_function(
+            rhs,
             value.(implicits), value.(states),
             value.(parameters),
             [value(iv)], value.(controls),
-            expression = Val{true})
+            expression = Val{true}
+        )
         f_oop = eval(ex_oop)
         f_iip = eval(ex_iip)
     end
 
     return DataDrivenFunction{_is_implicit, _is_controlled, typeof(f_oop), typeof(f_iip)}(
         f_oop,
-        f_iip)
+        f_iip
+    )
 end
 
 _apply_function(f::DataDrivenFunction, du, u, p, t, c) = begin
@@ -37,88 +44,121 @@ end
 
 function _apply_function!(f::DataDrivenFunction, res, du, u, p, t, c)
     (; f_iip) = f
-    f_iip(res, du, u, p, t, c)
+    return f_iip(res, du, u, p, t, c)
 end
 
 # Dispatch
 
-# OOP 
+# OOP
 
 # Without controls or implicits
-function (f::DataDrivenFunction{false, false})(u::AbstractVector, p::P,
-        t::Number) where {
+function (f::DataDrivenFunction{false, false})(
+        u::AbstractVector, p::P,
+        t::Number
+    ) where {
         P <:
-        Union{AbstractArray, Tuple
-}}
-    _apply_function(f, __EMPTY_VECTOR, u, p, t, __EMPTY_VECTOR)
+        Union{
+            AbstractArray, Tuple,
+        },
+    }
+    return _apply_function(f, __EMPTY_VECTOR, u, p, t, __EMPTY_VECTOR)
 end
 
 # Without implicits, with controls
-function (f::DataDrivenFunction{false, true})(u::AbstractVector, p::P, t::Number,
-        c::AbstractVector) where {
+function (f::DataDrivenFunction{false, true})(
+        u::AbstractVector, p::P, t::Number,
+        c::AbstractVector
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_function(f, __EMPTY_VECTOR, u, p, t, c)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_function(f, __EMPTY_VECTOR, u, p, t, c)
 end
 
 # With implicit, without controls
-function (f::DataDrivenFunction{true, false})(du::AbstractVector, u::AbstractVector, p::P,
-        t::Number) where {
+function (f::DataDrivenFunction{true, false})(
+        du::AbstractVector, u::AbstractVector, p::P,
+        t::Number
+    ) where {
         P <:
-        Union{AbstractArray, Tuple}}
-    _apply_function(f, du, u, p, t, __EMPTY_VECTOR)
+        Union{AbstractArray, Tuple},
+    }
+    return _apply_function(f, du, u, p, t, __EMPTY_VECTOR)
 end
 
 # With implicit and controls
-function (f::DataDrivenFunction{true, true})(du::AbstractVector, u::AbstractVector, p::P,
+function (f::DataDrivenFunction{true, true})(
+        du::AbstractVector, u::AbstractVector, p::P,
         t::Number,
-        c::AbstractVector) where {
+        c::AbstractVector
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_function(f, du, u, p, t, c)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_function(f, du, u, p, t, c)
 end
 
-# IIP 
+# IIP
 
 # Without controls or implicits
 function (f::DataDrivenFunction{false, false})(
         res::AbstractVector, u::AbstractVector, p::P,
-        t::Number) where {
+        t::Number
+    ) where {
         P <:
-        Union{AbstractArray, Tuple
-}}
-    _apply_function!(f, res, __EMPTY_VECTOR, u, p, t, __EMPTY_VECTOR)
+        Union{
+            AbstractArray, Tuple,
+        },
+    }
+    return _apply_function!(f, res, __EMPTY_VECTOR, u, p, t, __EMPTY_VECTOR)
 end
 
 # Without implicits, with controls
-function (f::DataDrivenFunction{false, true})(res::AbstractVector, u::AbstractVector, p::P,
+function (f::DataDrivenFunction{false, true})(
+        res::AbstractVector, u::AbstractVector, p::P,
         t::Number,
-        c::AbstractVector) where {
+        c::AbstractVector
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_function!(f, res, __EMPTY_VECTOR, u, p, t, c)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_function!(f, res, __EMPTY_VECTOR, u, p, t, c)
 end
 
 # With implicit, without controls
-function (f::DataDrivenFunction{true, false})(res::AbstractVector, du::AbstractVector,
+function (f::DataDrivenFunction{true, false})(
+        res::AbstractVector, du::AbstractVector,
         u::AbstractVector, p::P,
-        t::Number) where {
+        t::Number
+    ) where {
         P <:
-        Union{AbstractArray, Tuple}}
-    _apply_function!(f, res, du, u, p, t, __EMPTY_VECTOR)
+        Union{AbstractArray, Tuple},
+    }
+    return _apply_function!(f, res, du, u, p, t, __EMPTY_VECTOR)
 end
 
 # With implicit and controls
-function (f::DataDrivenFunction{true, true})(res::AbstractVector, du::AbstractVector,
+function (f::DataDrivenFunction{true, true})(
+        res::AbstractVector, du::AbstractVector,
         u::AbstractVector, p::P, t::Number,
-        c::AbstractVector) where {
+        c::AbstractVector
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_function!(f, res, du, u, p, t, c)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_function!(f, res, du, u, p, t, c)
 end
 
 ##
@@ -131,97 +171,134 @@ maybeview(x, id) = x
 function _check_array_inputs(res, du, u, p, t, c)
     # Collect the keys here
     n_obs = size(u, 2)
-    @assert n_obs==length(t) "Number of observations $(n_obs) does not match timepoints $(length(t))"
+    @assert n_obs == length(t) "Number of observations $(n_obs) does not match timepoints $(length(t))"
 
     isempty(du) ||
-        @assert n_obs==size(du, 2) "Number of observations $(n_obs) does not match implicits $(size(du, 2))"
+        @assert n_obs == size(du, 2) "Number of observations $(n_obs) does not match implicits $(size(du, 2))"
 
     isempty(c) ||
-        @assert n_obs==size(c, 2) "Number of observations $(n_obs) does not match controls $(size(c, 2))"
+        @assert n_obs == size(c, 2) "Number of observations $(n_obs) does not match controls $(size(c, 2))"
 
-    isempty(res) ||
-        @assert n_obs==size(res, 2) "Number of observations $(n_obs) does not match residuals $(size(res, 2))"
+    return isempty(res) ||
+        @assert n_obs == size(res, 2) "Number of observations $(n_obs) does not match residuals $(size(res, 2))"
 end
 
-function _apply_vec_function(f::DataDrivenFunction, du::AbstractMatrix, u::AbstractMatrix,
-        p::AbstractVector, t::AbstractVector, c::AbstractMatrix)
+function _apply_vec_function(
+        f::DataDrivenFunction, du::AbstractMatrix, u::AbstractMatrix,
+        p::AbstractVector, t::AbstractVector, c::AbstractMatrix
+    )
     _check_array_inputs(__EMPTY_MATRIX, du, u, p, t, c)
 
-    reduce(hcat,
+    return reduce(
+        hcat,
         map(axes(u, 2)) do i
-            _apply_function(f,
+            _apply_function(
+                f,
                 maybeview(du, i),
                 maybeview(u, i),
                 view(p, :),
                 maybeview(t, i),
-                maybeview(c, i))
-        end)
+                maybeview(c, i)
+            )
+        end
+    )
 end
 
-function _apply_vec_function!(f::DataDrivenFunction, res::AbstractMatrix,
+function _apply_vec_function!(
+        f::DataDrivenFunction, res::AbstractMatrix,
         du::AbstractMatrix, u::AbstractMatrix, p::AbstractVector,
-        t::AbstractVector, c::AbstractMatrix)
+        t::AbstractVector, c::AbstractMatrix
+    )
     _check_array_inputs(res, du, u, p, t, c)
 
-    foreach(axes(u, 2)) do i
-        _apply_function!(f,
+    return foreach(axes(u, 2)) do i
+        _apply_function!(
+            f,
             maybeview(res, i),
             maybeview(du, i), maybeview(u, i), view(p, :),
-            maybeview(t, i), maybeview(c, i))
+            maybeview(t, i), maybeview(c, i)
+        )
     end
 end
 
-## OOP 
+## OOP
 
-function (f::DataDrivenFunction{false, false})(u::AbstractMatrix, p::P,
-        t::AbstractVector) where {
+function (f::DataDrivenFunction{false, false})(
+        u::AbstractMatrix, p::P,
+        t::AbstractVector
+    ) where {
         P <: Union{
-        AbstractArray,
-        Tuple}}
-    _apply_vec_function(f, __EMPTY_MATRIX, u, p, t, __EMPTY_MATRIX)
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_vec_function(f, __EMPTY_MATRIX, u, p, t, __EMPTY_MATRIX)
 end
 
-function (f::DataDrivenFunction{false, true})(u::AbstractMatrix, p::P, t::AbstractVector,
-        c::AbstractMatrix) where {
+function (f::DataDrivenFunction{false, true})(
+        u::AbstractMatrix, p::P, t::AbstractVector,
+        c::AbstractMatrix
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_vec_function(f, __EMPTY_MATRIX, u, p, t, c)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_vec_function(f, __EMPTY_MATRIX, u, p, t, c)
 end
 
-function (f::DataDrivenFunction{true, false})(du::AbstractMatrix, u::AbstractMatrix, p::P,
-        t::AbstractVector) where {
+function (f::DataDrivenFunction{true, false})(
+        du::AbstractMatrix, u::AbstractMatrix, p::P,
+        t::AbstractVector
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_vec_function(f, du, u, p, t, __EMPTY_MATRIX)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_vec_function(f, du, u, p, t, __EMPTY_MATRIX)
 end
 
-## IIP 
+## IIP
 
 function (f::DataDrivenFunction{false, false})(
         res::AbstractMatrix, u::AbstractMatrix, p::P,
-        t::AbstractVector) where {
+        t::AbstractVector
+    ) where {
         P <: Union{
-        AbstractArray,
-        Tuple}}
-    _apply_vec_function!(f, res, __EMPTY_MATRIX, u, p, t, __EMPTY_MATRIX)
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_vec_function!(f, res, __EMPTY_MATRIX, u, p, t, __EMPTY_MATRIX)
 end
 
-function (f::DataDrivenFunction{false, true})(res::AbstractMatrix, u::AbstractMatrix, p::P,
+function (f::DataDrivenFunction{false, true})(
+        res::AbstractMatrix, u::AbstractMatrix, p::P,
         t::AbstractVector,
-        c::AbstractMatrix) where {
+        c::AbstractMatrix
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_vec_function!(f, res, __EMPTY_MATRIX, u, p, t, c)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_vec_function!(f, res, __EMPTY_MATRIX, u, p, t, c)
 end
 
-function (f::DataDrivenFunction{true, false})(res::AbstractMatrix, du::AbstractMatrix,
+function (f::DataDrivenFunction{true, false})(
+        res::AbstractMatrix, du::AbstractMatrix,
         u::AbstractMatrix, p::P,
-        t::AbstractVector) where {
+        t::AbstractVector
+    ) where {
         P <:
-        Union{AbstractArray,
-        Tuple}}
-    _apply_vec_function!(f, res, du, u, p, t, __EMPTY_MATRIX)
+        Union{
+            AbstractArray,
+            Tuple,
+        },
+    }
+    return _apply_vec_function!(f, res, du, u, p, t, __EMPTY_MATRIX)
 end

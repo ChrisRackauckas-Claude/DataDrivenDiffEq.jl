@@ -19,7 +19,7 @@ using SymbolicUtils: operation, arguments, iscall, issym
 using Symbolics
 using Symbolics: scalarize, variable, value
 @reexport using ModelingToolkit: unknowns, parameters, independent_variable, observed,
-                                 get_iv, get_observed
+    get_iv, get_observed
 
 # Local Difference operator (removed from Symbolics v7)
 include("./difference.jl")
@@ -30,13 +30,13 @@ using QuadGK
 using Statistics
 using StatsBase
 @reexport using StatsBase: rss, r2, aic, aicc, bic, summarystats, loglikelihood,
-                           nullloglikelihood, nobs, dof
+    nullloglikelihood, nobs, dof
 
 using DataInterpolations
 @reexport using DataInterpolations: ConstantInterpolation, LinearInterpolation,
-                                    QuadraticInterpolation, LagrangeInterpolation,
-                                    QuadraticSpline, CubicSpline, BSplineInterpolation,
-                                    BSplineApprox, Curvefit
+    QuadraticInterpolation, LagrangeInterpolation,
+    QuadraticSpline, CubicSpline, BSplineInterpolation,
+    BSplineApprox, Curvefit
 
 @reexport using MLUtils: splitobs, DataLoader
 @reexport using StatsBase: ZScoreTransform, UnitRangeTransform

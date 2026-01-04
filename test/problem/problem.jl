@@ -68,8 +68,10 @@ end
 
 @testset "Problem Basis Interaction" begin
     @variables x y z t α β u
-    b1 = Basis([α * x; β * y; z * t^2 + u], [x; y; z], iv = t, parameters = [α; β],
-        controls = [u])
+    b1 = Basis(
+        [α * x; β * y; z * t^2 + u], [x; y; z], iv = t, parameters = [α; β],
+        controls = [u]
+    )
     b2 = Basis([α * x; β * y; z * t; α], [x; y; z], iv = t, parameters = [α; β])
     sample_size = 100
     X1 = randn(3, sample_size)
@@ -125,8 +127,10 @@ end
     p2 = ContinuousDataDrivenProblem(X, t, DX = DX)
     p3 = ContinuousDataDrivenProblem(X, t, DX = DX)
 
-    data = (prob1 = (X = X, t = t, Y = Y),
-        prob2 = (X = X, t = t, Y = Y, DX = DX))
+    data = (
+        prob1 = (X = X, t = t, Y = Y),
+        prob2 = (X = X, t = t, Y = Y, DX = DX),
+    )
 
     s1 = DataDrivenDataset(p1, p2)
     s2 = ContinuousDataset(data)
@@ -144,11 +148,11 @@ end
     # Sizes
     for s in sets
         @test size(s) ==
-              (first(size(p1)), is_discrete(s) ? 2 * size(X, 2) - 2 : 2 * size(X, 2))
+            (first(size(p1)), is_discrete(s) ? 2 * size(X, 2) - 2 : 2 * size(X, 2))
         @test DataDrivenDiffEq.is_valid(s)
     end
 
-    # Basis handling 
+    # Basis handling
     @variables x[1:size(X, 1)]
     b = Basis(x, x)
     @test b(s1) == hcat(b(p1), b(p2))
@@ -158,8 +162,10 @@ end
     @test hcat(X, X, X) == b(s5)
 
     # Check if misspecified data is detected
-    wrong_data = (prob1 = (X = X, Y = Y),
-        prob2 = (X = X, t = t, Y = Y))
+    wrong_data = (
+        prob1 = (X = X, Y = Y),
+        prob2 = (X = X, t = t, Y = Y),
+    )
     @test_throws ArgumentError ContinuousDataset(wrong_data)
 end
 
@@ -169,13 +175,13 @@ end
 
     # Define autoregulation system without @mtkmodel macro
     # (avoids macro import issues with SafeTestsets)
-    @parameters α=1.0 β=1.3 γ=2.0 δ=0.5
-    @variables (x(time))[1:2]=[20.0, 12.0]
+    @parameters α = 1.0 β = 1.3 γ = 2.0 δ = 0.5
+    @variables (x(time))[1:2] = [20.0, 12.0]
     x = collect(x)
 
     eqs = [
         D(x[1]) ~ α / (1 + x[2]) - β * x[1],
-        D(x[2]) ~ γ / (1 + x[1]) - δ * x[2]
+        D(x[2]) ~ γ / (1 + x[1]) - δ * x[2],
     ]
 
     @named sys = System(eqs, time)

@@ -29,13 +29,17 @@ end
 
 # Constructor
 
-function DataDrivenDataset(probs::Vararg{T, N}; name = gensym(:DDSet),
-        kwargs...) where {T <: AbstractDataDrivenProblem, N}
+function DataDrivenDataset(
+        probs::Vararg{T, N}; name = gensym(:DDSet),
+        kwargs...
+    ) where {T <: AbstractDataDrivenProblem, N}
     return DataDrivenDataset(name, probs, map(length, probs))
 end
 
-function DataDrivenDataset(solutions::Vararg{T, N}; name = gensym(:DDSet),
-        kwargs...) where {T <: DiffEqBase.DESolution, N}
+function DataDrivenDataset(
+        solutions::Vararg{T, N}; name = gensym(:DDSet),
+        kwargs...
+    ) where {T <: DiffEqBase.DESolution, N}
     probs = map(solutions) do s
         DataDrivenProblem(s; kwargs...)
     end
@@ -54,7 +58,7 @@ function DirectDataset(s::NamedTuple; name = gensym(:DDSet), kwargs...)
         DataDrivenProblem(si[:X]; probtype = DDProbType(1), _kwargs...)
     end
 
-    DataDrivenDataset(probs...; name = name)
+    return DataDrivenDataset(probs...; name = name)
 end
 
 """
@@ -68,7 +72,7 @@ function DiscreteDataset(s::NamedTuple; name = gensym(:DDSet), kwargs...)
         _kwargs = collect_problem_kwargs(si; kwargs...)
         DataDrivenProblem(si[:X]; probtype = DDProbType(2), _kwargs...)
     end
-    DataDrivenDataset(probs...; name = name)
+    return DataDrivenDataset(probs...; name = name)
 end
 
 """
@@ -79,8 +83,10 @@ $(SIGNATURES)
 Automatically constructs derivatives via an additional collocation method, which can be either a collocation
 or an interpolation from `DataInterpolations.jl` wrapped by an `InterpolationMethod` provided by the `collocation` keyword argument.
 """
-function ContinuousDataset(s::NamedTuple; name = gensym(:DDSet),
-        collocation = InterpolationMethod(), kwargs...)
+function ContinuousDataset(
+        s::NamedTuple; name = gensym(:DDSet),
+        collocation = InterpolationMethod(), kwargs...
+    )
     probs = map(keys(s)) do k
         si = s[k]
         # Check for differential states
@@ -94,7 +100,7 @@ function ContinuousDataset(s::NamedTuple; name = gensym(:DDSet),
             throw(ArgumentError("A continuous problem $(k) needs to have either derivative or time information specified!"))
         end
     end
-    DataDrivenDataset(probs...; name = name)
+    return DataDrivenDataset(probs...; name = name)
 end
 
 collect_problem_kwargs(s; kwargs...) = begin
@@ -131,25 +137,27 @@ function Base.print(io::IO, x::DataDrivenDataset{N, C, P}) where {N, C, P}
 end
 
 function is_valid(x::DataDrivenDataset)
-    all(map(is_valid, x.probs))
+    return all(map(is_valid, x.probs))
 end
 
 function get_implicit_data(x::DataDrivenDataset)
-    reduce(hcat, map(get_implicit_data, x.probs))
+    return reduce(hcat, map(get_implicit_data, x.probs))
 end
 
 # We assume common parameters (for now)
 function ModelingToolkit.parameters(x::DataDrivenDataset, i = :)
-    parameters(first(x.probs), i)
+    return parameters(first(x.probs), i)
 end
 
-function remake_problem(d::DataDrivenDataset{<:Any, <:Any, probType};
+function remake_problem(
+        d::DataDrivenDataset{<:Any, <:Any, probType};
         p = parameters(d),
-        kwargs...) where {probType}
+        kwargs...
+    ) where {probType}
     probs = map(d.probs) do prob
         remake_problem(prob, p = p)
     end
-    DataDrivenDataset(probs...)
+    return DataDrivenDataset(probs...)
 end
 
 function get_oop_args(x::DataDrivenDataset)
@@ -163,5 +171,5 @@ function get_oop_args(x::DataDrivenDataset)
         t = vcat(t, t̂)
         U = hcat(U, Û)
     end
-    X, p, t, U
+    return X, p, t, U
 end

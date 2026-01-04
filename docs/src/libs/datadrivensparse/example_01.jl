@@ -1,6 +1,6 @@
 # # [Getting Started](@id getting_started)
 #
-# The workflow for [DataDrivenDiffEq.jl](https://github.com/SciML/DataDrivenDiffEq.jl) is similar to other [SciML](https://sciml.ai/) packages. 
+# The workflow for [DataDrivenDiffEq.jl](https://github.com/SciML/DataDrivenDiffEq.jl) is similar to other [SciML](https://sciml.ai/) packages.
 # You start by defining a [`DataDrivenProblem`](@ref) and then dispatch on the [`solve`](@ref solve) command to return a [`DataDrivenSolution`](@ref).
 
 # Here is an outline of the required elements and choices:
@@ -13,7 +13,7 @@ using ModelingToolkit
 using LinearAlgebra
 using DataDrivenSparse
 
-# Generate a test problem 
+# Generate a test problem
 
 f(u) = u .^ 2 .+ 2.0u .- 1.0
 X = randn(1, 100);

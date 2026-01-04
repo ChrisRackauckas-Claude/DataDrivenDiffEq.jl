@@ -1,4 +1,3 @@
-
 """
 $(TYPEDEF)
 
@@ -39,13 +38,15 @@ function mask_inverse(::typeof(identity), arity::Int, in_f::AbstractVector)
     return ones(Bool, length(in_f))
 end
 
-function FunctionNode(f::F, arity::Int, input_dimension::Int,
+function FunctionNode(
+        f::F, arity::Int, input_dimension::Int,
         id::Union{Int, NTuple{<:Any, Int}}; skip = false, simplex = Softmax(),
-        input_functions = [identity for i in 1:input_dimension], kwargs...) where {F}
+        input_functions = [identity for i in 1:input_dimension], kwargs...
+    ) where {F}
     input_mask = mask_inverse(f, arity, input_functions)
 
-    @assert sum(input_mask)>=1 "Input masks should enable at least one choice."
-    @assert length(input_mask)==input_dimension "Input dimension should be sized equally \
+    @assert sum(input_mask) >= 1 "Input masks should enable at least one choice."
+    @assert length(input_mask) == input_dimension "Input dimension should be sized equally \
                                                  to input_mask"
 
     internal_node = InternalFunctionNode{id}(f, arity, input_dimension, simplex, input_mask)
@@ -62,8 +63,10 @@ end
 function LuxCore.initialstates(rng::AbstractRNG, p::InternalFunctionNode)
     rand(rng)
     rng_ = LuxCore.replicate(rng)
-    return (; priors = init_weights(p.simplex, rng, sum(p.input_mask), p.arity),
-        active_inputs = zeros(Int, p.arity), temperature = 1.0f0, rng = rng_)
+    return (;
+        priors = init_weights(p.simplex, rng, sum(p.input_mask), p.arity),
+        active_inputs = zeros(Int, p.arity), temperature = 1.0f0, rng = rng_,
+    )
 end
 
 @views function update_state(p::InternalFunctionNode, ps, st)
@@ -99,9 +102,11 @@ end
 get_temperature(::FunctionNode, ps, st) = st.temperature
 
 function get_loglikelihood(::FunctionNode, ps, st)
-    return sum(map(enumerate(eachcol(ps.weights))) do (i, weight)
-        return logsoftmax(weight ./ st.temperature)[st.active_inputs[i]]
-    end)
+    return sum(
+        map(enumerate(eachcol(ps.weights))) do (i, weight)
+            return logsoftmax(weight ./ st.temperature)[st.active_inputs[i]]
+        end
+    )
 end
 
 get_inputs(::FunctionNode, ps, st) = st.active_inputs

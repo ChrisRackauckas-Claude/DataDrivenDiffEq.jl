@@ -19,11 +19,11 @@ ImplicitOptimizer(0.1f0, ADMM)
 ```
 """
 mutable struct ImplicitOptimizer{T <: AbstractSparseRegressionAlgorithm} <:
-               AbstractSparseRegressionAlgorithm
+    AbstractSparseRegressionAlgorithm
     """Explicit Optimizer"""
     optimizer::T
 
-    function ImplicitOptimizer(threshold = 1e-1, opt = STLSQ)
+    function ImplicitOptimizer(threshold = 1.0e-1, opt = STLSQ)
         optimizer = opt(threshold)
         return new{typeof(optimizer)}(optimizer)
     end
@@ -37,10 +37,12 @@ Base.summary(opt::ImplicitOptimizer) = "Implicit Optimizer using " * summary(opt
 
 get_threshold(opt::ImplicitOptimizer) = get_threshold(opt.optimizer)
 
-function (x::ImplicitOptimizer)(X, Y;
+function (x::ImplicitOptimizer)(
+        X, Y;
         options::DataDrivenCommonOptions = DataDrivenCommonOptions(),
         necessary_idx = ones(Bool, size(X, 1)),
-        kwargs...)
+        kwargs...
+    )
     @unpack optimizer = x
     @unpack verbose = options
 

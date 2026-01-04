@@ -1,11 +1,11 @@
 for f in [
-    :chebyshev_basis,
-    :sin_basis,
-    :cos_basis,
-    :fourier_basis,
-    :polynomial_basis,
-    :monomial_basis
-]
+        :chebyshev_basis,
+        :sin_basis,
+        :cos_basis,
+        :fourier_basis,
+        :polynomial_basis,
+        :monomial_basis,
+    ]
     @eval $f(x, c) = $f(scalarize(x), c)
 end
 
@@ -28,7 +28,7 @@ function chebyshev_basis(x::Array, coefficients::AbstractVector)
     eqs = Array{Num}(undef, size(x, 1) * length(coefficients))
     f(x, t) = cos.(t .* acos.(x))
     _generateBasis!(eqs, f, x, coefficients)
-    eqs
+    return eqs
 end
 
 chebyshev_basis(x::Array, terms::Int) = chebyshev_basis(x, 1:terms)
@@ -43,7 +43,7 @@ function sin_basis(x::Array, coefficients::AbstractVector)
     eqs = Array{Num}(undef, size(x, 1) * length(coefficients))
     f(x, t) = sin.(t .* x)
     _generateBasis!(eqs, f, x, coefficients)
-    eqs
+    return eqs
 end
 
 sin_basis(x::Array, terms::Int) = sin_basis(x, 1:terms)
@@ -58,7 +58,7 @@ function cos_basis(x::Array, coefficients::AbstractVector)
     eqs = Array{Num}(undef, size(x, 1) * length(coefficients))
     f(x, t) = cos.(t .* x)
     _generateBasis!(eqs, f, x, coefficients)
-    eqs
+    return eqs
 end
 
 cos_basis(x::Array, terms::Int) = cos_basis(x, 1:terms)
@@ -73,7 +73,7 @@ function fourier_basis(x::Array, coefficients::AbstractVector{Int})
     eqs = Array{Num}(undef, size(x, 1) * length(coefficients))
     f(x, t) = iseven(t) ? cos.(t .* x ./ 2) : sin.(t .* x ./ 2)
     _generateBasis!(eqs, f, x, coefficients)
-    eqs
+    return eqs
 end
 
 fourier_basis(x::Array, terms::Int) = fourier_basis(x, 1:terms)
@@ -103,7 +103,7 @@ function polynomial_basis(x::Array, degree::Int = 1)
             end
         end
     end
-    eqs
+    return eqs
 end
 
 """
@@ -126,5 +126,5 @@ function monomial_basis(x::AbstractArray, degree::Int = 1)
         idx = (i - 1) * n_e + j + 1
         eqs[idx] = x[i]^exponents[j]
     end
-    eqs
+    return eqs
 end
