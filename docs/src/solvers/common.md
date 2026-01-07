@@ -59,4 +59,4 @@ Common choices for `selector` are `rss`, `bic`, `aic`, `aicc`, and `r2`. Given t
 options = DataDrivenCommonOptions(selector = (x) -> rss(x) / nobs(x))
 ```
 
-Which results in the mean squared error of the system.
+which results in the mean squared error of the system.
