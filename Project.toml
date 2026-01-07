@@ -30,6 +30,7 @@ CommonSolve = "0.2"
 DataInterpolations = "4, 5, 6, 7, 8"
 DiffEqBase = "6"
 DocStringExtensions = "0.7, 0.8, 0.9"
+JET = "0.9, 0.10, 0.11"
 MLUtils = "0.3, 0.4"
 ModelingToolkit = "11"
 OrdinaryDiffEqTsit5 = "1"
@@ -48,6 +49,7 @@ Symbolics = "7"
 julia = "1.10"
 
 [extras]
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 OrdinaryDiffEqTsit5 = "b1df2697-797e-41e3-8120-5422d3b24e4a"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
@@ -55,4 +57,4 @@ SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Random", "SafeTestsets", "Pkg", "OrdinaryDiffEqTsit5"]
+test = ["Test", "Random", "SafeTestsets", "Pkg", "OrdinaryDiffEqTsit5", "JET"]

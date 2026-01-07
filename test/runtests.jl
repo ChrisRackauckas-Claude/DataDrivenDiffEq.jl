@@ -41,6 +41,14 @@ end
                 include("./commonsolve/commonsolve.jl")
             end
         end
+
+        # Run JET analysis tests only in CI or when GROUP explicitly includes JET
+        # Note: JET tests may take longer due to static analysis overhead
+        if get(ENV, "CI", "false") == "true" || get(ENV, "RUN_JET_TESTS", "false") == "true"
+            @safetestset "JET Static Analysis" begin
+                include("./jet_tests.jl")
+            end
+        end
     else
         dev_subpkg(GROUP)
         subpkg_path = joinpath(dirname(@__DIR__), "lib", GROUP)

@@ -114,6 +114,15 @@ end
 
 Base.eltype(::AbstractDataDrivenProblem{T}) where {T} = T
 
+# Internal constructor that is type-stable once cType and probType are known
+# This function barrier ensures the inner construction is fully specialized
+function _construct_datadrivenproblem(
+        ::Val{cType}, ::Val{probType}, dType::Type{T}, X, t, DX, Y, U, p, name
+    ) where {cType, probType, T}
+    promoted = _promote(X, t, DX, Y, U, p)
+    return DataDrivenProblem{T, cType, probType}(promoted..., name)
+end
+
 function DataDrivenProblem(
         probType, X, t, DX, Y, U, p; name = gensym(:DDProblem),
         kwargs...
@@ -131,7 +140,10 @@ function DataDrivenProblem(
         end
     end
 
-    return DataDrivenProblem{dType, cType, probType}(_promote(X, t, DX, Y, U, p)..., name)
+    # Use function barrier with Val types for type stability
+    return _construct_datadrivenproblem(
+        Val(cType), Val(probType), dType, X, t, DX, Y, U, p, name
+    )
 end
 
 function remake_problem(
