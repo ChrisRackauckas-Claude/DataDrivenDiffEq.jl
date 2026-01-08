@@ -99,10 +99,10 @@ Pkg.add("DataDrivenSR")
 
   - See the [SciML Style Guide](https://github.com/SciML/SciMLStyle) for common coding practices and other style decisions.
   - There are a few community forums:
-    
+
       + The #diffeq-bridged and #sciml-bridged channels in the
-        [Julia Slack](https://julialang.org/slack/),
-        you can message @AlCap23 to start a discussion.
+        [Julia Slack](https://julialang.org/slack/).
+        You can message @AlCap23 to start a discussion.
       + The #diffeq-bridged and #sciml-bridged channels in the
         [Julia Zulip](https://julialang.zulipchat.com/#narrow/stream/279055-sciml-bridged)
       + On the [Julia Discourse forums](https://discourse.julialang.org)

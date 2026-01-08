@@ -4,7 +4,7 @@ If you are using `DataDrivenDiffEq.jl` for research, please cite
 
 ```bibtex
 @software{datadrivendiffeq,
-  author       = {JuliusMartensen and
+  author       = {Julius Martensen and
                   Christopher Rackauckas and others},
   title        = {DataDrivenDiffEq.jl},
   month        = jul,

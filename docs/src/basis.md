@@ -6,7 +6,7 @@ Basis
 
 ## API
 
-Next to [ModelingToolkits API](https://docs.sciml.ai/ModelingToolkit/stable/basics/AbstractSystem/) for `AbstractSystems`, a [`Basis`](@ref) can be called with the following methods:
+Next to [ModelingToolkit's API](https://docs.sciml.ai/ModelingToolkit/stable/basics/AbstractSystem/) for `AbstractSystems`, a [`Basis`](@ref) can be called with the following methods:
 
 ```@docs
 dynamics
