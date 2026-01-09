@@ -1,7 +1,7 @@
 name = "DataDrivenLux"
 uuid = "47881146-99d0-492a-8425-8f2f33327637"
-authors = ["JuliusMartensen <julius.martensen@gmail.com>"]
 version = "0.2.2"
+authors = ["JuliusMartensen <julius.martensen@gmail.com>"]
 
 [deps]
 AbstractDifferentiation = "c29ec348-61ec-40c8-8164-b8c60e9d9f3d"
@@ -45,7 +45,7 @@ IntervalArithmetic = "0.22, 0.23, 1"
 InverseFunctions = "0.1"
 Lux = "1"
 LuxCore = "1"
-Optim = "1.7"
+Optim = "1.7, 2"
 Optimisers = "0.3, 0.4"
 ProgressMeter = "1.7"
 Setfield = "1"
