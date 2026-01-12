@@ -51,8 +51,9 @@ using Test
         U = Matrix{Float64}(undef, 0, 0)
         p = Float64[]
 
-        # The internal constructor with concrete types should be type-stable
-        @test_opt target_modules = (DataDrivenDiffEq,) DataDrivenDiffEq._construct_datadrivenproblem(
+        # The internal constructor has runtime dispatch in _promote on Julia lts
+        # due to broadcasting with abstract element types. Fixed in Julia 1.11+.
+        @test_opt broken = (VERSION < v"1.11") target_modules = (DataDrivenDiffEq,) DataDrivenDiffEq._construct_datadrivenproblem(
             Val(false),
             Val(DataDrivenDiffEq.DDProbType(3)),
             Float64,
