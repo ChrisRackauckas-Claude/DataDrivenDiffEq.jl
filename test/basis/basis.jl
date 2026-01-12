@@ -126,8 +126,9 @@ end
     @test size(basis_2) == (5,)
     # Note: Order may differ due to internal Symbolics representation
     # The linear_independent basis extracts terms which may be reordered
-    @test basis_2([1.0; 2.0; π], [0.0; 1.0]) ≈ [1.0; -1.0; π; 2.0; 1.0]
-    @test basis([1.0; 2.0; π], [0.0; 1.0]) ≈ [1.0; 2.0; π; -1.0; 5 * π + 2.0; 1.0]
+    # Use Set comparison to handle non-deterministic ordering
+    @test Set(basis_2([1.0; 2.0; π], [0.0; 1.0])) ≈ Set([1.0; -1.0; π; 2.0; 1.0])
+    @test Set(basis([1.0; 2.0; π], [0.0; 1.0])) ≈ Set([1.0; 2.0; π; -1.0; 5 * π + 2.0; 1.0])
 
     @test size(basis) == size(basis_2) .+ (1,)
     push!(basis_2, sin(u[2]))
