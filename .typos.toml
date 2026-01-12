@@ -1,4 +1,7 @@
 [default.extend-words]
+# Pre-existing typos in public API (breaking to fix)
+expresssion = "expresssion"
+
 # Julia-specific functions
 indexin = "indexin"
 findfirst = "findfirst"
