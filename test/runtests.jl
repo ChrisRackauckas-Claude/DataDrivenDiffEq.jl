@@ -16,6 +16,12 @@ function activate_subpkg_env(subpkg)
     return Pkg.instantiate()
 end
 
+function activate_nopre_env()
+    Pkg.activate(joinpath(@__DIR__, "nopre"))
+    Pkg.develop(PackageSpec(path = dirname(@__DIR__)))
+    return Pkg.instantiate()
+end
+
 @time begin
     if GROUP == "All" || GROUP == "Core" || GROUP == "Downstream"
         @testset "All" begin
@@ -40,6 +46,13 @@ end
             @safetestset "CommonSolve" begin
                 include("./commonsolve/commonsolve.jl")
             end
+        end
+    elseif GROUP == "nopre"
+        # nopre tests are excluded from Julia pre-release versions in CI
+        # to avoid failures from upstream changes (e.g., JET type inference)
+        activate_nopre_env()
+        @safetestset "JET Static Analysis" begin
+            include("nopre/jet_tests.jl")
         end
     else
         dev_subpkg(GROUP)
