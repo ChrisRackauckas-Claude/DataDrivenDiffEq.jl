@@ -518,7 +518,7 @@ function DataDrivenProblem(
         sol::T; use_interpolation = false,
         kwargs...
     ) where {T <: DiffEqBase.DESolution}
-    if sol.retcode != :Success
+    if !DiffEqBase.SciMLBase.successful_retcode(sol)
         throw(AssertionError("The solution is not successful. Abort."))
         return
     end
