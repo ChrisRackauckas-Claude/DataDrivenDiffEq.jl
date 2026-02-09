@@ -10,13 +10,14 @@ end
 
 dev_subpkg("DataDrivenDMD")
 dev_subpkg("DataDrivenSparse")
-dev_subpkg("DataDrivenSR")
+# DataDrivenSR disabled: SymbolicRegression v1 incompatible with SymbolicUtils v4. See #590
+# dev_subpkg("DataDrivenSR")
 
 using Documenter
 using DataDrivenDiffEq
 using DataDrivenDMD
 using DataDrivenSparse
-using DataDrivenSR
+# using DataDrivenSR  # disabled, see #590
 
 using StatsBase
 using Literate
@@ -67,10 +68,8 @@ sparse_tutorial = create_tutorials(
     joinpath(@__DIR__, "src/libs/datadrivensparse/"),
     joinpath(@__DIR__, "src/libs/datadrivensparse/examples")
 )
-sr_tutorial = create_tutorials(
-    joinpath(@__DIR__, "src/libs/datadrivensr/"),
-    joinpath(@__DIR__, "src/libs/datadrivensr/examples")
-)
+# DataDrivenSR tutorials disabled, see #590
+sr_tutorial = String[]
 
 # Must be after tutorials is created
 include("pages.jl")
@@ -79,7 +78,7 @@ include("pages.jl")
 makedocs(
     sitename = "DataDrivenDiffEq.jl",
     authors = "Julius Martensen, Christopher Rackauckas, et al.",
-    modules = [DataDrivenDiffEq, DataDrivenDMD, DataDrivenSparse, DataDrivenSR],
+    modules = [DataDrivenDiffEq, DataDrivenDMD, DataDrivenSparse],
     clean = true, doctest = false, linkcheck = true,
     warnonly = [:missing_docs, :cross_references],
     linkcheck_ignore = [
