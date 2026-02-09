@@ -10,14 +10,13 @@ end
 
 dev_subpkg("DataDrivenDMD")
 dev_subpkg("DataDrivenSparse")
-# DataDrivenSR disabled: SymbolicRegression v1 incompatible with SymbolicUtils v4. See #590
-# dev_subpkg("DataDrivenSR")
+dev_subpkg("DataDrivenSR")
 
 using Documenter
 using DataDrivenDiffEq
 using DataDrivenDMD
 using DataDrivenSparse
-# using DataDrivenSR  # disabled, see #590
+using DataDrivenSR
 
 using StatsBase
 using Literate
@@ -68,8 +67,10 @@ sparse_tutorial = create_tutorials(
     joinpath(@__DIR__, "src/libs/datadrivensparse/"),
     joinpath(@__DIR__, "src/libs/datadrivensparse/examples")
 )
-# DataDrivenSR tutorials disabled, see #590
-sr_tutorial = String[]
+sr_tutorial = create_tutorials(
+    joinpath(@__DIR__, "src/libs/datadrivensr/"),
+    joinpath(@__DIR__, "src/libs/datadrivensr/examples")
+)
 
 # Must be after tutorials is created
 include("pages.jl")
@@ -78,15 +79,14 @@ include("pages.jl")
 makedocs(
     sitename = "DataDrivenDiffEq.jl",
     authors = "Julius Martensen, Christopher Rackauckas, et al.",
-    modules = [DataDrivenDiffEq, DataDrivenDMD, DataDrivenSparse],
+    modules = [DataDrivenDiffEq, DataDrivenDMD, DataDrivenSparse, DataDrivenSR],
     clean = true, doctest = false, linkcheck = true,
-    warnonly = [:missing_docs, :cross_references, :example_block],
+    warnonly = [:missing_docs, :cross_references],
     linkcheck_ignore = [
         "http://cwrowley.princeton.edu/papers/Hemati-2017a.pdf",
         "https://royalsocietypublishing.org/doi/10.1098/rspa.2020.0279",
         "https://www.pnas.org/doi/10.1073/pnas.1517384113",
         "https://link.springer.com/article/10.1007/s00332-015-9258-5",
-        "https://docs.sciml.ai/ModelingToolkit/stable/basics/AbstractSystem/",
     ],
     format = Documenter.HTML(
         assets = ["assets/favicon.ico"],
