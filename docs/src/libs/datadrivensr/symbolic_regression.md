@@ -10,6 +10,5 @@ For examples see the tutorial section.
 
 ## [Algorithms](@id sr_algorithms)
 
-```@docs
-EQSearch
-```
+!!! warning "DataDrivenSR temporarily disabled"
+    DataDrivenSR is currently disabled due to SymbolicRegression v1 being incompatible with SymbolicUtils v4. See [issue #590](https://github.com/SciML/DataDrivenDiffEq.jl/issues/590) for details.

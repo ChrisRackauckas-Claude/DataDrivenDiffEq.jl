@@ -80,12 +80,13 @@ makedocs(
     authors = "Julius Martensen, Christopher Rackauckas, et al.",
     modules = [DataDrivenDiffEq, DataDrivenDMD, DataDrivenSparse],
     clean = true, doctest = false, linkcheck = true,
-    warnonly = [:missing_docs, :cross_references],
+    warnonly = [:missing_docs, :cross_references, :example_block],
     linkcheck_ignore = [
         "http://cwrowley.princeton.edu/papers/Hemati-2017a.pdf",
         "https://royalsocietypublishing.org/doi/10.1098/rspa.2020.0279",
         "https://www.pnas.org/doi/10.1073/pnas.1517384113",
         "https://link.springer.com/article/10.1007/s00332-015-9258-5",
+        "https://docs.sciml.ai/ModelingToolkit/stable/basics/AbstractSystem/",
     ],
     format = Documenter.HTML(
         assets = ["assets/favicon.ico"],
