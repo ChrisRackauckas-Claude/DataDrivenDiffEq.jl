@@ -19,7 +19,7 @@ jobs:
         group:
           - Core
           - DataDrivenDMD
-          - DataDrivenSR
+          # DataDrivenSR disabled: SymbolicRegression v1 incompatible with SymbolicUtils v4, v2 still in alpha. See #590
           - DataDrivenSparse
           - DataDrivenLux
           - nopre
