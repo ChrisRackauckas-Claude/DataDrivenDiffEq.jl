@@ -56,6 +56,10 @@ end
     discrete_prob = DiscreteDataDrivenProblem(x)
 
     d = Difference(get_iv(basis), dt = 1.0)
+    # On 32-bit builds (UInt == UInt32) the hash seed literal in Base.hash(::Difference, ::UInt)
+    # used to widen to UInt64 via `xor`, breaking SymbolicUtils hashconsing
+    # (https://github.com/SciML/DataDrivenDiffEq.jl/actions/runs/35188714123).
+    @test typeof(hash(d, UInt(1))) === UInt
     @test Symbolics.symtype(d(first(states(basis)))) === Real
     @test isempty(Symbolics.shape(d(first(states(basis)))))
     ∂ = Differential(get_iv(basis))
